@@ -1,0 +1,1285 @@
+@import './tokens.css';
+@import 'swiper/css/bundle';
+
+/* ────────────────────────────────────────────────────────────────────────────
+   WOOCOMMERCE DESIGN SYSTEM OVERRIDES
+   Enqueued only on WooCommerce pages (is_woocommerce, cart, checkout, account).
+   All values use CSS custom properties from tokens.css so dark mode and
+   client rebranding work automatically.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* ── Product grid ── */
+
+.woocommerce ul.products {
+  /* clear: both ensures this grid starts below the floated result-count/ordering toolbar */
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+}
+
+.woocommerce ul.products li.product {
+  /* !important beats woocommerce-layout.css float-based sizing regardless of load order */
+  float: none !important;
+  width: auto !important;
+  margin: 0 !important;
+  /* Card styles */
+  display: flex;
+  flex-direction: column;
+  background-color: var(--wc-surface-bg);
+  border: inherit;
+  border-radius: 0.1rem;
+  overflow: hidden;
+  transition:
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+
+/* Suppress WooCommerce-layout.css clearfix pseudo-elements — they become ghost grid items */
+.woocommerce ul.products::before,
+.woocommerce ul.products::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Responsive product-grid: mobile (< 768px) via Customizer body classes */
+@media (max-width: 767.98px) {
+  body.sobe-catalog-mobile-columns-1 .woocommerce ul.products {
+    grid-template-columns: 1fr;
+  }
+
+  body.sobe-catalog-mobile-columns-2 .woocommerce ul.products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Responsive product-grid: tablet (768px – 1023px) via Customizer body classes */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  body.sobe-catalog-tablet-columns-1 .woocommerce ul.products {
+    grid-template-columns: 1fr;
+  }
+
+  body.sobe-catalog-tablet-columns-2 .woocommerce ul.products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  body.sobe-catalog-tablet-columns-3 .woocommerce ul.products {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Responsive product-grid: desktop (≥ 1024px) via WooCommerce .columns-N class */
+@media (min-width: 1024px) {
+  .woocommerce ul.products.columns-1 {
+    grid-template-columns: 1fr;
+  }
+
+  .woocommerce ul.products.columns-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .woocommerce ul.products.columns-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .woocommerce ul.products.columns-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .woocommerce ul.products.columns-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.woocommerce ul.products li.product:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+/* ── Layout 2 (Harrods: minimal editorial — brand / title / price only) ── */
+/* PHP hooks remove add-to-cart + stars; CSS adjusts spacing for the buttonless card */
+
+body.sobe-layout-2 .woocommerce ul.products li.product {
+  overflow: visible;
+  border-bottom: 2px solid transparent;
+  transition:
+    border-color 300ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+
+body.sobe-layout-2 .woocommerce ul.products li.product:hover {
+  /* border-bottom-color: var(--wc-button-bg); */
+  transform: none;
+  box-shadow: none;
+}
+
+body.sobe-layout-2 .woocommerce ul.products li.product .price {
+  padding-bottom: 1.25rem;
+}
+
+body.sobe-layout-2 .woocommerce ul.products li.product a img {
+  transition: opacity 300ms ease;
+}
+
+body.sobe-layout-2 .woocommerce ul.products li.product:hover a img {
+  transform: none;
+  opacity: 0.88;
+}
+
+.woocommerce ul.products li.product a img {
+  width: 100%;
+  /* height: 14rem; */
+  object-fit: cover;
+  display: block;
+  transition: transform 300ms ease;
+}
+
+.woocommerce ul.products li.product:hover a img {
+  transform: scale(1.04);
+}
+
+/* ── Product card details ── */
+
+.woocommerce ul.products li.product .product-brand {
+  display: block;
+  padding: 1.25rem 1rem 0;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-heading);
+}
+
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+  font-size: var(--wc-product-card-title-size);
+  font-weight: 400;
+  color: var(--wc-product-card-title-color);
+  padding: 0.35rem 1rem 0.25rem;
+  margin: 0;
+}
+
+/* Reduce title top-gap when preceded by a brand label */
+.woocommerce
+  ul.products
+  li.product:has(.product-brand)
+  .woocommerce-loop-product__title {
+  padding-top: 0.25rem;
+}
+
+.woocommerce ul.products li.product .price {
+  display: block;
+  padding: 0 1rem 0.75rem;
+  font-size: var(--wc-price-size);
+  font-weight: 600;
+  color: var(--wc-price-regular-color);
+}
+
+.woocommerce ul.products li.product .price ins,
+.woocommerce div.product p.price ins,
+.woocommerce div.product span.price ins {
+  color: var(--wc-price-sale-color);
+  text-decoration: none;
+}
+
+.woocommerce ul.products li.product .price del {
+  color: var(--wc-price-compare-color);
+  font-weight: 400;
+  margin-right: 0.375rem;
+}
+
+.woocommerce div.product p.price del,
+.woocommerce div.product span.price del {
+  color: var(--wc-price-compare-color);
+}
+
+/* ── Sale badge ── */
+
+.woocommerce ul.products li.product .onsale,
+.woocommerce span.onsale {
+  position: absolute !important;
+  display: inline-block !important;
+  background-color: transparent;
+  color: var(--c-heading);
+  border: 1px solid var(--c-heading);
+  border-radius: 0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.5rem;
+  min-height: unset !important;
+  min-width: unset !important;
+  line-height: 1.4;
+  top: 0.75rem !important;
+  right: auto !important;
+  left: 0.75rem !important;
+  z-index: 1;
+}
+
+.woocommerce ul.products li.product .onsale::before,
+.woocommerce ul.products li.product .onsale::after,
+.woocommerce span.onsale::before,
+.woocommerce span.onsale::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* ── Star ratings ── */
+
+.woocommerce .star-rating {
+  color: var(--wc-rating-stars-color);
+  font-size: 0.875rem;
+  /* margin not padding — WC sets overflow:hidden + height:1em on this element.
+     padding on a border-box element reduces inner height, clipping the stars to zero. */
+  margin: 0.25rem 1rem 0.5rem;
+}
+
+.woocommerce .products .star-rating {
+  /* *margin: 0 0 0.2rem 1rem !important; */
+}
+
+/* ── Add-to-cart buttons ── */
+
+.woocommerce ul.products li.product .button,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button,
+.woocommerce #respond input#submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--wc-button-fg);
+  background-color: var(--wc-button-bg);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 150ms ease;
+  margin: auto 1rem 1rem;
+  width: calc(100% - 2rem);
+}
+
+.woocommerce ul.products li.product .button,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button,
+.woocommerce #respond input#submit,
+.woocommerce a.button.wc-forward {
+  color: var(--wc-add-to-cart-sign-color);
+}
+
+.woocommerce ul.products li.product .button:hover,
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover,
+.woocommerce #respond input#submit:hover {
+  background-color: var(--wc-button-hover-bg);
+  color: var(--wc-button-hover-fg);
+}
+
+.woocommerce ul.products li.product .button:hover,
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover,
+.woocommerce #respond input#submit:hover,
+.woocommerce a.button.wc-forward:hover {
+  color: var(--wc-add-to-cart-sign-hover-color);
+}
+
+.woocommerce a.button.alt,
+.woocommerce button.button.alt,
+.woocommerce input.button.alt {
+  background-color: var(--wc-button-alt-bg);
+  color: var(--wc-button-alt-fg);
+}
+
+.woocommerce a.button.alt:hover,
+.woocommerce button.button.alt:hover,
+.woocommerce input.button.alt:hover {
+  background-color: var(--wc-button-alt-hover-bg);
+  color: var(--wc-button-alt-hover-fg);
+}
+
+/* ── Shop page header ── */
+
+.woocommerce-products-header__title {
+  font-size: var(--wc-product-archive-title-size);
+  font-weight: 700;
+  color: var(--wc-product-archive-title-color);
+  margin-bottom: 1.5rem;
+}
+
+/* ── Shop sidebar layout ── */
+
+.shop-with-sidebar {
+  align-items: flex-start;
+}
+
+.shop-sidebar {
+  position: sticky;
+  top: 2rem;
+}
+
+.shop-main {
+  min-width: 0;
+}
+
+/* Widget styling in shop sidebar */
+.shop-sidebar .widget {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--c-surface-1);
+  border-radius: 0.5rem;
+  border: 1px solid var(--c-border);
+}
+
+.shop-sidebar .widget-title,
+.shop-sidebar .widgettitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-heading);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--c-border);
+}
+
+/* WooCommerce filter widgets */
+.shop-sidebar .wc-layered-nav-term {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  transition: color 150ms ease;
+}
+
+.shop-sidebar .wc-layered-nav-term:hover {
+  color: var(--c-accent);
+}
+
+.shop-sidebar .price_slider_wrapper {
+  padding: 0.5rem 0;
+}
+
+.shop-sidebar .price_slider {
+  margin-bottom: 1rem;
+}
+
+.shop-sidebar .ui-slider-range {
+  background: var(--c-accent);
+}
+
+.shop-sidebar .ui-slider-handle {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+/* Active filters */
+.shop-sidebar .woocommerce-widget-layered-nav-dropdown__submit {
+  margin-top: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--wc-button-fg);
+  background-color: var(--wc-button-bg);
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.shop-sidebar .woocommerce-widget-layered-nav-dropdown__submit:hover {
+  background-color: var(--wc-button-hover-bg);
+}
+
+/* ── Result count + ordering ── */
+
+/* Collapse the empty WooCommerce notices wrapper so it doesn't become a flex item */
+.woocommerce .woocommerce-notices-wrapper:empty {
+  display: none;
+}
+
+.woocommerce-result-count {
+  float: none !important;
+  color: var(--wc-result-count-color);
+  font-size: 0.875rem;
+  margin-bottom: 0;
+}
+
+.woocommerce-ordering {
+  float: none !important;
+  margin-bottom: 0;
+}
+
+.woocommerce-ordering select {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--wc-ordering-select-fg);
+  background-color: var(--wc-ordering-select-bg);
+  border: 1px solid var(--wc-ordering-select-border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+/* ── Single product ── */
+
+.woocommerce div.product .product_title {
+  font-size: var(--wc-product-single-title-size);
+  color: var(--wc-product-single-title-color);
+}
+
+.woocommerce div.product .woocommerce-product-gallery {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.woocommerce div.product p.price,
+.woocommerce div.product span.price {
+  color: var(--wc-price-regular-color);
+  font-size: var(--wc-price-single-size);
+  font-weight: 700;
+}
+
+.woocommerce div.product .woocommerce-product-details__short-description {
+  color: var(--wc-short-description-color);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Single product PDP: 2-row × 2-column grid ── */
+
+.pdp-grid {
+  display: grid;
+  /* Gallery 3fr; summary 2fr (60/40 split).
+     Width defined on the track (not the item) is the correct grid pattern — avoids
+     min-content blowout caused by Swiper's oversized flex wrapper. */
+  grid-template-columns: 3fr 2fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    'gallery    summary'
+    'shortdesc  accordions';
+  gap: 2rem 3rem;
+  align-items: start;
+}
+
+.pdp-gallery {
+  grid-area: gallery;
+  min-width: 0;
+  overflow: hidden;
+}
+.pdp-grid .summary,
+.woocommerce div.product .pdp-summary.summary {
+  float: none !important;
+  width: auto !important;
+  clear: none;
+}
+.pdp-summary {
+  grid-area: summary;
+  min-width: 0;
+}
+.pdp-short-desc {
+  grid-area: shortdesc;
+  min-width: 0;
+}
+.pdp-accordions {
+  grid-area: accordions;
+  min-width: 0;
+}
+
+@media (max-width: 1023px) {
+  .pdp-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'gallery'
+      'summary'
+      'shortdesc'
+      'accordions';
+  }
+}
+
+/* ── Swiper gallery — main slider ── */
+
+/* Overflow visible so the 1.5-slide peek effect shows adjacent slides.
+   The .pdp-gallery wrapper clips at its own edges. */
+.pdp-swiper-main {
+  border-radius: 0.75rem;
+  overflow: visible;
+  position: relative;
+}
+
+.pdp-swiper-main .swiper-slide {
+  aspect-ratio: 1 / 1;
+}
+
+:is(.swiper-button-prev, .swiper-button-next) ::slotted(svg),
+:is(.swiper-button-prev, .swiper-button-next) svg {
+  width: 50% !important;
+  height: 50% !important;
+}
+
+.pdp-swiper-main .swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* show full product without cropping */
+  display: block;
+  background: var(--wc-surface-bg, #fafafa);
+}
+
+/* Navigation arrows — centered vertically, hidden until hover on pointer devices */
+.pdp-swiper-main .swiper-button-prev,
+.pdp-swiper-main .swiper-button-next {
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--wc-surface-bg, #fff);
+  border: 1px solid var(--c-border, #e5e7eb);
+  border-radius: 50%;
+  color: var(--c-text);
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 0;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.pdp-swiper-main .swiper-button-prev::after,
+.pdp-swiper-main .swiper-button-next::after {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.pdp-swiper-main .swiper-button-prev {
+  left: 0.75rem;
+}
+.pdp-swiper-main .swiper-button-next {
+  right: 0.75rem;
+}
+
+@media (hover: hover) {
+  .pdp-swiper-main:hover .swiper-button-prev,
+  .pdp-swiper-main:hover .swiper-button-next {
+    opacity: 1;
+  }
+}
+
+@media (hover: none) {
+  .pdp-swiper-main .swiper-button-prev,
+  .pdp-swiper-main .swiper-button-next {
+    opacity: 1;
+  }
+}
+
+/* Fraction pagination — "1 / 14" style */
+.pdp-swiper-main .swiper-pagination {
+  bottom: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--c-text);
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+/* ── Swiper gallery — thumbnail strip ── */
+
+.pdp-swiper-thumbs {
+  margin-top: 0.75rem;
+}
+
+.pdp-swiper-thumbs .swiper-slide {
+  width: 80px;
+  height: 80px;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+  border: 2px solid transparent;
+  flex-shrink: 0;
+}
+
+@media (max-width: 479px) {
+  .pdp-swiper-thumbs .swiper-slide {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.pdp-swiper-thumbs .swiper-slide-thumb-active {
+  opacity: 1;
+  border-color: var(--c-accent);
+}
+
+.pdp-swiper-thumbs .swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── PDP misc product details list (SKU, categories, tags) ── */
+
+.pdp-misc-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+}
+
+.pdp-misc-list dt {
+  font-weight: 500;
+  color: var(--c-text-muted);
+}
+
+/* ── PDP: hide WC variation price inside the form — JS updates the static price above instead ── */
+.single-product .single_variation .woocommerce-variation-price {
+  display: none !important;
+}
+
+/* ── PDP Add to Cart — outline button, dark/light mode aware ──
+   !important is required: WooCommerce injects inline styles on .button.alt that
+   would otherwise override these declarations. Do not remove without testing. ── */
+
+/* Cart form: qty in first row, ATC full-width below */
+.single-product form.cart {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.single-product .single_add_to_cart_button.button {
+  flex: 0 0 100% !important; /* own full-width row */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin: 1rem 0 0 0;
+  padding: 1rem 2rem !important;
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  background-color: transparent !important;
+  border: 1.5px solid var(--c-text) !important;
+  color: var(--c-text) !important;
+  border-radius: 0.25rem !important;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+@media (hover: hover) {
+  .single-product .single_add_to_cart_button.button:hover {
+    background-color: var(--c-text) !important;
+    color: var(--c-bg, #fff) !important;
+  }
+}
+
+.single-product .single_add_to_cart_button.button:focus-visible {
+  outline: 2px solid var(--c-ring);
+  outline-offset: 2px;
+}
+
+/* Explicit dark overrides — belt-and-suspenders in case --c-text token doesn't invert */
+.dark .single-product .single_add_to_cart_button.button {
+  border-color: #fff !important;
+  color: #fff !important;
+}
+
+@media (hover: hover) {
+  .dark .single-product .single_add_to_cart_button.button:hover {
+    background-color: #fff !important;
+    color: #111827 !important;
+  }
+}
+
+/* ── PDP product meta (SKU, category, tag, brand) ── */
+.woocommerce div.product .product_meta {
+  font-size: 0.7rem;
+  color: var(--c-text-muted);
+  line-height: 1.7;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--c-border);
+}
+
+/* Each term (SKU, Category, Tag, Brand) on its own line */
+.woocommerce div.product .product_meta > span {
+  display: block;
+}
+
+.woocommerce div.product .product_meta a {
+  color: var(--c-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Form fields (cart, checkout, account) ── */
+
+.woocommerce form .form-row input.input-text,
+.woocommerce form .form-row textarea,
+.woocommerce form .form-row select {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--wc-form-input-fg);
+  background-color: var(--wc-form-input-bg);
+  border: 1px solid var(--wc-form-border-color);
+  border-radius: 0.5rem;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.woocommerce form .form-row input.input-text:focus,
+.woocommerce form .form-row textarea:focus,
+.woocommerce form .form-row select:focus {
+  outline: none;
+  border-color: var(--wc-form-focus-ring-color);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--wc-form-focus-ring-color) 15%, transparent);
+}
+
+.woocommerce form .form-row label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--wc-form-label-color);
+  margin-bottom: 0.375rem;
+}
+
+/* ── Cart table ── */
+
+.woocommerce table.shop_table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.woocommerce table.shop_table th {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--wc-table-heading-color);
+  border-bottom: 1px solid var(--wc-table-border-color);
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+}
+
+.woocommerce table.shop_table td {
+  border-bottom: 1px solid var(--wc-table-border-color);
+  padding: 1rem 0.5rem;
+  vertical-align: middle;
+  color: var(--wc-table-cell-color);
+}
+
+.woocommerce table.shop_table .product-name a {
+  color: var(--wc-table-link-color);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.woocommerce table.shop_table .product-name a:hover {
+  color: var(--wc-table-link-hover-color);
+}
+
+/* ── Notices 
+
+.woocommerce-message,
+.woocommerce-info,
+.woocommerce-error {
+  border-top-color: var(--wc-notice-accent);
+  background-color: var(--wc-notice-bg);
+  color: var(--wc-notice-fg);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.woocommerce-error {
+  border-top-color: var(--wc-notice-accent);
+}
+
+── */
+
+/* ── Luxury Floating Toast Notices ── */
+.woocommerce-notices-wrapper {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none; /* Allows clicking on elements behind the wrapper */
+  width: auto;
+  max-width: 450px;
+}
+
+.woocommerce-notices-wrapper:empty {
+  display: none;
+}
+
+/* The Toast Card */
+.woocommerce-message,
+.woocommerce-error,
+.woocommerce-info {
+  pointer-events: auto; /* Reactivate clicks on the toast itself */
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem !important;
+  margin: 0 !important;
+  background-color: var(--c-heading, #111827) !important;
+  color: var(--c-surface-1, #ffffff) !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.2),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  animation: toastSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Hide legacy broken Woo icons */
+.woocommerce-message::before,
+.woocommerce-error::before,
+.woocommerce-info::before {
+  display: none !important;
+}
+
+/* Ensure links in the toast are legible against the dark background */
+.woocommerce-message a:not(.button),
+.woocommerce-error a:not(.button),
+.woocommerce-info a:not(.button) {
+  color: inherit !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Minimal outline style for the "View Cart" button */
+.woocommerce-message .button,
+.woocommerce-error .button,
+.woocommerce-info .button {
+  flex-shrink: 0;
+  background: transparent !important;
+  color: inherit !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.25rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin-left: auto !important;
+  transition: all 150ms ease !important;
+}
+
+.woocommerce-message .button:hover,
+.woocommerce-error .button:hover,
+.woocommerce-info .button:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Image hover swap (sobe_product_card_hover = swap) ── */
+
+.sobe-product-image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Disable the default zoom transform inside a swap wrapper */
+.woocommerce ul.products li.product a .sobe-product-image-wrapper img {
+  transition: opacity 300ms ease;
+}
+
+.woocommerce ul.products li.product:hover a .sobe-product-image-wrapper img {
+  transform: none;
+}
+
+.sobe-secondary-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.woocommerce ul.products li.product:hover .sobe-secondary-image {
+  opacity: 1;
+}
+
+/* ── Wishlist heart button ── */
+
+.sobe-wishlist-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--c-heading);
+  transition:
+    color 200ms ease,
+    background 200ms ease;
+  backdrop-filter: blur(4px);
+}
+
+.sobe-wishlist-btn:hover {
+  color: var(--c-accent);
+  background: #fff;
+}
+
+/* ── "Now" prefix on sale price ── */
+
+.woocommerce ul.products li.product .price ins::before {
+  content: 'Now ';
+  font-style: normal;
+}
+
+/* ── Add-to-cart button: hover-reveal on pointer devices only ── */
+
+@media (hover: hover) {
+  .woocommerce ul.products li.product .button {
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease,
+      background-color 150ms ease;
+  }
+
+  .woocommerce ul.products li.product:hover .button {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Layout 1: Center Align Everything ── */
+body:not(.sobe-layout-2) .woocommerce ul.products li.product {
+  text-align: center;
+}
+
+/* Force the stars to center (they use margins to align) */
+body:not(.sobe-layout-2) .woocommerce ul.products li.product .star-rating {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Force the price block to center */
+body:not(.sobe-layout-2) .woocommerce ul.products li.product .price {
+  justify-content: center;
+}
+
+/* ── Custom Accordions (PDP) ── */
+
+/* WooCommerce tab callbacks output an <h2> heading that duplicates the <summary> label.
+   Hide it — the summary already serves as the visible title. */
+.sobe-accordion > div > h2:first-child,
+.sobe-accordion > div .woocommerce-Reviews-title {
+  display: none;
+}
+
+/* Hide the default webkit triangle marker */
+.sobe-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Remove the ugly focus ring, rely on our custom SVG */
+.sobe-accordion summary:focus {
+  outline: none;
+}
+
+/* Add a smooth fade-in to the content */
+.sobe-accordion[open] summary ~ div {
+  animation: accordion-fade-in 300ms ease-out forwards;
+}
+
+@keyframes accordion-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* VARIATION TESTING for Variation Swatches for WooCommerce by Emran Ahmed */
+.woocommerce div.product form.cart .variations tbody tr {
+  display: flex;
+  flex-direction: column;
+}
+
+.woocommerce div.product form.cart .variations th {
+  display: block;
+  text-align: left;
+  padding: 0 0 0.5rem 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--c-heading);
+}
+
+.woocommerce div.product form.cart .variations td {
+  display: block;
+  padding: 0;
+}
+
+/* 2. Reset the list wrapper and use Flexbox gap */
+.woocommerce div.product form.cart .variations .variable-items-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 3. Base Swatch Styling (Square, Flat, No Bullets) */
+.woo-variation-swatches .variable-items-wrapper .variable-item {
+  list-style: none !important;
+  margin: 0 !important; /* Overrides default plugin margins */
+  border: 1px solid #e5e7eb;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background-color: transparent;
+  transition: all 200ms ease;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Typography for Text/Size Swatches */
+.woo-variation-swatches
+  .variable-items-wrapper
+  .variable-item:not(.image-variable-item):not(.color-variable-item) {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: var(--c-text);
+}
+
+/* Hover State */
+.woo-variation-swatches .variable-items-wrapper .variable-item:hover {
+  border-color: var(--c-heading);
+}
+
+/* Selected/Active State */
+.woo-variation-swatches .variable-items-wrapper .variable-item.selected {
+  border-color: var(--c-heading);
+  background-color: var(--c-heading);
+  color: var(--c-surface); /* White text */
+}
+
+/* Out of Stock State */
+.woo-variation-swatches .variable-items-wrapper .variable-item.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  position: relative;
+}
+.woo-variation-swatches .variable-items-wrapper .variable-item.disabled::before,
+.woo-variation-swatches .variable-items-wrapper .variable-item.disabled::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--c-heading);
+  transform: translateY(-50%) rotate(45deg);
+}
+.woo-variation-swatches .variable-items-wrapper .variable-item.disabled::after {
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+/* ── Quantity Input + +/− buttons ── */
+
+.woocommerce .quantity {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--c-border);
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.woocommerce .quantity input.qty {
+  width: 3.5rem;
+  height: 2.75rem;
+  text-align: center;
+  /* Input sits between the two buttons; wrapper owns the outer border */
+  border: none;
+  border-left: 1px solid var(--c-border);
+  border-right: 1px solid var(--c-border);
+  background: transparent;
+  color: var(--c-text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  appearance: none;
+  -moz-appearance: textfield;
+}
+
+.woocommerce .quantity input.qty:focus {
+  outline: none;
+}
+
+/* Hide browser spinners */
+.woocommerce .quantity input.qty::-webkit-outer-spin-button,
+.woocommerce .quantity input.qty::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* +/− buttons injected by product-gallery.js */
+.qty-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.125rem;
+  font-weight: 300;
+  color: var(--c-text);
+  transition: background-color 120ms ease;
+  flex-shrink: 0;
+}
+
+@media (hover: hover) {
+  .qty-btn:hover {
+    background: var(--c-surface-2, #f4f4f4);
+  }
+}
+
+.qty-btn:active {
+  background: var(--c-surface-2, #f4f4f4);
+}
+
+/* ── Variation Swatches (supplemental overrides) ── */
+
+.woo-variation-swatches .variable-items-wrapper {
+  gap: 0.5rem;
+}
+
+.woo-variation-swatches .variable-item {
+  border: 1px solid var(--c-border);
+  background: transparent;
+  color: var(--c-text);
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  cursor: pointer;
+  transition: all 150ms ease;
+  min-width: 2.5rem;
+  text-align: center;
+  box-shadow: none !important;
+}
+
+.woo-variation-swatches .variable-item:hover {
+  border-color: var(--c-text-muted);
+}
+
+.woo-variation-swatches .variable-item.selected,
+.woo-variation-swatches .variable-item.active {
+  border-color: var(--c-text) !important;
+  background-color: var(--c-text) !important;
+  color: var(--c-bg) !important;
+  box-shadow: none !important;
+}
+
+/* Color swatch circles */
+.woo-variation-swatches .variable-item.color-variable-item {
+  border-radius: 50%;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  position: relative;
+}
+
+.woo-variation-swatches .variable-item.color-variable-item.selected::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 2px solid var(--c-text);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Disabled / out-of-stock */
+.woo-variation-swatches .variable-item.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.woocommerce-info::before {
+  display: none !important;
+}
+
+.single-product .single_add_to_cart_button.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.single-product .single_add_to_cart_button.loading::after {
+  content: '';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}

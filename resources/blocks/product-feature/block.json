@@ -1,0 +1,72 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "sobe/product-feature",
+  "version": "0.2.0",
+  "title": "Product Feature",
+  "category": "sobe-blocks",
+  "description": "Two-column product showcase with editable content.",
+  "textdomain": "sobe",
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "className": true,
+    "align": ["wide", "full"]
+  },
+  "attributes": {
+    "align": {
+      "type": "string",
+      "default": "wide"
+    },
+    "productId": {
+      "type": "number",
+      "default": 0
+    },
+    "layout": {
+      "type": "string",
+      "enum": ["product-left", "product-right"],
+      "default": "product-left"
+    },
+    "imageRatio": {
+      "type": "string",
+      "enum": ["original", "square", "landscape"],
+      "default": "original"
+    },
+    "showProductImage": {
+      "type": "boolean",
+      "default": true
+    },
+    "showProductTitle": {
+      "type": "boolean",
+      "default": true
+    },
+    "showProductPrice": {
+      "type": "boolean",
+      "default": true
+    },
+    "showProductBrand": {
+      "type": "boolean",
+      "default": true
+    },
+    "customBrandText": {
+      "type": "string",
+      "default": ""
+    },
+    "heading": {
+      "type": "string",
+      "default": ""
+    },
+    "paragraph": {
+      "type": "string",
+      "default": ""
+    },
+    "ctaText": {
+      "type": "string",
+      "default": ""
+    },
+    "ctaUrl": {
+      "type": "string",
+      "default": ""
+    }
+  }
+}

@@ -1,0 +1,11 @@
+/node_modules
+/vendor
+/public/*
+!/public/.gitkeep
+public/hot
+.env
+npm-debug.log
+CLAUDE.MD
+.playwright-mcp
+.claude
+SCALABILITY.txt

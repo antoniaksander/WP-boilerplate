@@ -1,0 +1,28 @@
+/* Default State: Closed */
+.sobe-faq .sobe-faq__answer-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 400ms ease-in-out;
+  overflow: hidden;
+  visibility: hidden; /* Added for extra safety */
+}
+
+/* Open State: Expanded */
+.sobe-faq .sobe-faq__item.is-open .sobe-faq__answer-wrapper {
+  grid-template-rows: 1fr;
+  visibility: visible;
+}
+
+/* Crucial for the Grid trick */
+.sobe-faq .sobe-faq__answer-inner {
+  min-height: 0;
+}
+
+/* Chevron Rotation */
+.sobe-faq .faq__chevron {
+  transition: transform 0.3s ease;
+}
+
+.sobe-faq .sobe-faq__item.is-open .faq__chevron {
+  transform: rotate(180deg);
+}

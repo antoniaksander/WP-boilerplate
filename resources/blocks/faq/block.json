@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "name": "sobe/faq",
+  "version": "1.0.0",
+  "title": "FAQ",
+  "category": "sobe-blocks",
+  "apiVersion": 3,
+  "description": "Accordion-style FAQ block with animated expand/collapse.",
+  "icon": "editor-help",
+  "textdomain": "sobe",
+  "attributes": {
+    "align": {
+      "type": "string",
+      "default": "wide"
+    },
+    "faqs": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "default": ""
+          },
+          "answer": {
+            "type": "string",
+            "default": ""
+          }
+        }
+      }
+    }
+  },
+  "supports": {
+    "anchor": true,
+    "className": true,
+    "align": ["wide", "full"]
+  }
+}

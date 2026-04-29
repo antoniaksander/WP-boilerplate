@@ -1,0 +1,304 @@
+<?php
+
+/**
+ * WooCommerce integration.
+ */
+
+namespace App;
+
+if (! class_exists('WooCommerce')) {
+    return;
+}
+
+/**
+ * Declare WooCommerce feature support.
+ */
+add_action('after_setup_theme', function () {
+    add_theme_support('woocommerce');
+    // wc-product-gallery-zoom intentionally omitted: Splide owns the gallery DOM;
+    // zoom-on-hover JS expects .woocommerce-product-gallery__image which Splide removes.
+    // Click-to-PhotoSwipe in product-gallery.js provides lightbox UX instead.
+    add_theme_support('wc-product-gallery-lightbox');
+    add_theme_support('wc-product-gallery-slider');
+    remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10);
+}, 20);
+
+/**
+ * AJAX cart fragments.
+ *
+ * WooCommerce calls this filter after every add-to-cart action and on
+ * page load (via cart-fragments.js). We return two fragments:
+ *
+ *   div.sobe-side-cart-content — the scrollable cart item list
+ *   span.sobe-cart-count       — the header badge
+ *
+ * Each key is a CSS selector; WooCommerce jQuery-replaces the matching
+ * element in the DOM with the fragment value.
+ *
+ * @param  array<string, string>  $fragments
+ * @return array<string, string>
+ */
+add_filter('woocommerce_add_to_cart_fragments', function (array $fragments): array {
+    $pfx = config('theme.prefix');
+    $count = WC()->cart ? (int) WC()->cart->get_cart_contents_count() : 0;
+
+    $fragments["div.{$pfx}-side-cart-content"] = view('partials.side-cart-content')->render();
+
+    $fragments["span.{$pfx}-cart-count"] = sprintf(
+        '<span class="%s-cart-count absolute -top-1 -right-1 size-4 flex items-center justify-center rounded-full bg-accent text-accent-fg text-[10px] font-bold leading-none%s">%d</span>',
+        $pfx,
+        $count > 0 ? '' : ' hidden',
+        $count
+    );
+
+    return $fragments;
+});
+
+/**
+ * Replace WooCommerce's default <div class="woocommerce"> content wrappers
+ * with design-system-aligned section markup — equivalent to:
+ * <x-section padding="default" width="grid">
+ *
+ * Blade components can't be used in PHP action hooks directly, so we output
+ * the rendered HTML equivalent inline.
+ */
+add_action('after_setup_theme', function () {
+    remove_action('woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
+    remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
+}, 21); // Priority 21 — runs after WC registers its defaults at 20
+
+add_action('woocommerce_before_main_content', function () {
+    echo '<section class="py-16 md:py-24 woocommerce"><div class="max-w-standard mx-auto w-full px-6 lg:px-8">';
+}, 10);
+
+add_action('woocommerce_after_main_content', function () {
+    echo '</div></section>';
+}, 10);
+
+/**
+ * Enqueue WooCommerce-specific styles only on WooCommerce pages.
+ * Priority 100 (after WC registers its styles at 99) so our overrides
+ * win in the cascade without needing !important.
+ */
+add_action('wp_enqueue_scripts', function () {
+    if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) {
+        wp_enqueue_style(
+            config('theme.prefix') . '-woocommerce',
+            \Roots\asset('resources/css/woocommerce.css')->uri(),
+            ['woocommerce-general', 'woocommerce-layout', 'woocommerce-smallscreen'],
+            null
+        );
+    }
+}, 100);
+
+add_filter('loop_shop_columns', fn () => config('theme.wc_columns.desktop'));
+
+/**
+ * Force-load WooCommerce cart fragments script on all pages.
+ *
+ * Enables the mini-cart sidebar to work via AJAX on pages that aren't WooCommerce
+ * templates (e.g. Home, Blog, About).
+ */
+add_action('wp_enqueue_scripts', function () {
+    if (class_exists('WC_Frontend_Scripts') && ! is_admin()) {
+        // Natively forces all WC scripts + localised params (AJAX, fragments) globally
+        \WC_Frontend_Scripts::load_scripts();
+    }
+}, 99);
+
+add_action('wp_head', function () {
+    if (! is_admin() && class_exists('WooCommerce')) {
+        $pfx = config('theme.prefix');
+        $params = [
+            'ajaxUrl'          => admin_url('admin-ajax.php'),
+            'ajaxAction'       => "{$pfx}_refresh_cart",
+            'storeApiNonce'    => wp_create_nonce('wc_store_api'),
+            'storeApiCartUrl'  => rest_url('wc/store/v1/cart'),
+            'storeApiAddUrl'   => rest_url('wc/store/v1/cart/add-item'),
+            'sideCartEnabled'  => (bool) get_theme_mod("{$pfx}_enable_side_cart", true),
+            'addedToCartText'  => __('Product added to cart', 'sobe'),
+            'cartOpenedText'   => __('Product added to cart. Your cart is now open.', 'sobe'),
+            'addToCartErrorText' => __('Could not add product to cart.', 'sobe'),
+            'networkErrorText' => __('Something went wrong. Please try again.', 'sobe'),
+            'wcAjaxUrl'        => \WC_AJAX::get_endpoint('%%endpoint%%'),
+        ];
+        echo '<script>window.themeCartParams = ' . \wp_json_encode($params) . ';</script>';
+    }
+}, 5);
+
+add_filter('body_class', function (array $classes): array {
+    if (! (is_shop() || is_product_taxonomy())) {
+        return $classes;
+    }
+
+    $pfx = config('theme.prefix');
+
+    $mobileColumns = get_theme_mod("{$pfx}_product_catalog_mobile_columns", '2');
+    if (! in_array($mobileColumns, ['1', '2'], true)) {
+        $mobileColumns = '2';
+    }
+
+    $tabletColumns = get_theme_mod("{$pfx}_product_catalog_tablet_columns", '3');
+    if (! in_array($tabletColumns, ['1', '2', '3'], true)) {
+        $tabletColumns = '3';
+    }
+
+    $classes[] = "{$pfx}-catalog-mobile-columns-{$mobileColumns}";
+    $classes[] = "{$pfx}-catalog-tablet-columns-{$tabletColumns}";
+
+    return $classes;
+});
+
+add_filter('body_class', function (array $classes): array {
+    $pfx = config('theme.prefix');
+    if (get_theme_mod("{$pfx}_product_card_layout", 'layout-1') === 'layout-2') {
+        $classes[] = "{$pfx}-layout-2";
+    }
+    return $classes;
+});
+
+/**
+ * Hybrid Model hook management.
+ *
+ * Runs at priority 22 so WooCommerce's template hooks (loaded at priority 10
+ * via wc-template-hooks.php) are already registered when we remove/add them.
+ *
+ * Tier 1/2 removals: WC's own callbacks are removed so Blade templates own
+ * the structural DOM shell. The do_action() calls remain in the templates —
+ * the hook bus stays open for plugins (quick-view, badges, BNPL, etc.).
+ */
+add_action('after_setup_theme', function () {
+    $pfx    = config('theme.prefix');
+    $layout = get_theme_mod("{$pfx}_product_card_layout", 'layout-1');
+
+    // ── Tier 1/2: Blade owns the product card DOM shell ────────────────────
+
+    // Link wrappers — Blade writes <a> in Zone A and closes it there.
+    remove_action('woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10);
+    remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5);
+
+    // Image — Blade renders woocommerce_get_product_thumbnail() in Zone A.
+    // Hover-swap dual-image logic lives in content-product.blade.php.
+    remove_action('woocommerce_before_shop_loop_item_title', 'woocommerce_template_loop_product_thumbnail', 10);
+
+    // Sale badge — rendered directly in content-product.blade.php.
+    remove_action('woocommerce_before_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 10);
+
+    // Title — Blade renders <h2> wrapped in its own <a href> in Zone B.
+    remove_action('woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10);
+
+    // ── Tier 1: Blade owns the PDP title ───────────────────────────────────
+    // content-single-product.blade.php renders <h1> above woocommerce_single_product_summary.
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_title', 5);
+
+    // ── Tier 1: Blade owns the PDP gallery (Splide replaces WC FlexSlider) ──
+    // Splide markup renders directly in content-single-product.blade.php.
+    // Hook bus stays open — sale flash and other plugins still fire.
+    remove_action('woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20);
+
+    // ── Short description moved to Row 2, Col 1 of the 2-row PDP grid ───────
+    // Rendered via wc_format_content() in content-single-product.blade.php.
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
+
+    // ── Brand label (all layouts) ───────────────────────────────────────────
+    // Fires at priority 5, before the title link rendered by Blade.
+    add_action('woocommerce_shop_loop_item_title', function () {
+        global $product;
+        $terms = get_the_terms($product->get_id(), 'product_brand');
+        if ($terms && ! is_wp_error($terms)) {
+            echo '<span class="product-brand">'.esc_html($terms[0]->name).'</span>';
+        }
+    }, 5);
+
+    // ── Layout-specific hook logic ──────────────────────────────────────────
+    if ($layout === 'layout-1') {
+        // Stars at priority 4 appear before price (priority 10) in Zone B.
+        remove_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 5);
+        add_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 4);
+
+    } elseif ($layout === 'layout-2') {
+        // Harrods: clean brand/title/price — no button, no stars.
+        remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10);
+        remove_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 5);
+    }
+}, 22);
+
+/**
+ * Extra product tabs — Shipping Information and Product Details (Misc).
+ *
+ * Added at priority 20 so they appear after WooCommerce's built-in tabs
+ * (Description 10, Additional Info 20, Reviews 30). The Shipping copy is
+ * wrapped in apply_filters() so child themes or plugins can swap it out
+ * without editing theme files.
+ */
+add_filter('woocommerce_product_tabs', function (array $tabs): array {
+    $tabs['shipping_info'] = [
+        'title'    => __('Shipping Information', 'sobe'),
+        'priority' => 50,
+        'callback' => function (): void {
+            echo '<p>' . wp_kses_post(
+                apply_filters(
+                    'sobe_shipping_info_text',
+                    __('Free standard shipping on all orders over $100. Express delivery available at checkout.', 'sobe')
+                )
+            ) . '</p>';
+        },
+    ];
+
+    $tabs['misc'] = [
+        'title'    => __('Product Details', 'sobe'),
+        'priority' => 60,
+        'callback' => function (): void {
+            global $product;
+            $sku  = $product->get_sku();
+            $cats = wc_get_product_category_list($product->get_id(), ', ');
+            $tags = wc_get_product_tag_list($product->get_id(), ', ');
+            echo '<dl class="pdp-misc-list">';
+            if ($sku) {
+                printf('<dt>%s</dt><dd>%s</dd>', esc_html__('SKU', 'sobe'), esc_html($sku));
+            }
+            if ($cats) {
+                printf('<dt>%s</dt><dd>%s</dd>', esc_html__('Categories', 'sobe'), wp_kses_post($cats));
+            }
+            if ($tags) {
+                printf('<dt>%s</dt><dd>%s</dd>', esc_html__('Tags', 'sobe'), wp_kses_post($tags));
+            }
+            echo '</dl>';
+        },
+    ];
+
+    return $tabs;
+}, 20);
+/**
+ * Enqueue Swiper product gallery on single product pages only.
+ *
+ * jQuery is listed as a dependency because the variation-switching code in
+ * product-gallery.js uses jQuery to listen for WooCommerce's found_variation
+ * jQuery event (WC fires it via $.trigger, not native dispatchEvent).
+ */
+add_action('wp_enqueue_scripts', function (): void {
+    if (! is_product()) {
+        return;
+    }
+    wp_enqueue_script(
+        config('theme.prefix') . '-product-gallery',
+        \Roots\asset('resources/js/product-gallery.js')->uri(),
+        ['jquery'],
+        null,
+        true
+    );
+});
+
+$refresh_cart_handler = function () {
+    check_ajax_referer('wc_store_api');
+    if (! defined('DOING_AJAX')) {
+        define('DOING_AJAX', true);
+    }
+    WC()->cart->calculate_totals();
+    echo view('partials.side-cart-content')->render();
+    wp_die();
+};
+
+$refresh_action = config('theme.prefix') . '_refresh_cart';
+add_action("wp_ajax_{$refresh_action}", $refresh_cart_handler);
+add_action("wp_ajax_nopriv_{$refresh_action}", $refresh_cart_handler);
