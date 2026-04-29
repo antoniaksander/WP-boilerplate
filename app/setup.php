@@ -133,6 +133,9 @@ add_filter('allowed_block_types_all', function ($allowed_blocks, $editor_context
         'core/spacer',
         'core/shortcode',
         'core/table',
+        'core/group',
+        'core/columns',
+        'core/column',
         // Current WooCommerce Product Filter Block
         'woocommerce/product-filters',
         'woocommerce/active-filters', // Only use if explicitly supported by your version
