@@ -68,6 +68,24 @@ add_action('init', function () {
     }
 });
 
+/**
+ * Register block pattern category and patterns.
+ */
+add_action('init', function () {
+    $pfx = config('theme.prefix');
+
+    register_block_pattern_category('sobe-patterns', [
+        'label' => __('Sobe Layouts', 'sage'),
+    ]);
+
+    register_block_pattern('sobe/homepage-showcase', [
+        'title'       => __('Homepage Showcase', 'sage'),
+        'description' => __('High-end agency homepage with hero, brand carousel, and product features.', 'sage'),
+        'categories'  => ['sobe-patterns'],
+        'content'     => require resource_path('patterns/homepage-showcase.php'),
+    ]);
+});
+
 // Isolate module scope for each block to prevent Vite minifier collisions with window._
 add_filter('script_loader_tag', function ($tag, $handle) {
     $pfx = config('theme.prefix');
@@ -332,6 +350,25 @@ add_action('after_setup_theme', function () {
     //     'header-text' => '',
     //     'size' => 'full',
     // ]);
+
+    /**
+     * Enable starter content support.
+     *
+     * @link https://developer.wordpress.org/reference/functions/add_theme_support/#starter-content
+     */
+    add_theme_support('starter-content', [
+        'posts' => [
+            'home' => [
+                'post_type'  => 'page',
+                'post_title' => __('Home', 'sobe'),
+                'post_content' => require resource_path('patterns/homepage-showcase.php'),
+            ],
+        ],
+        'options' => [
+            'show_on_front' => 'page',
+            'page_on_front' => '{{home}}',
+        ],
+    ]);
 }, 20);
 
 /**
