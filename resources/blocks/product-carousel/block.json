@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "sobe/product-carousel",
+  "version": "0.1.0",
+  "title": "Product Carousel",
+  "icon": "cart",
+  "category": "sobe-blocks",
+  "description": "A swipeable carousel of WooCommerce products.",
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "className": true,
+    "align": ["wide", "full"]
+  },
+  "textdomain": "sage",
+  "attributes": {
+    "align": {
+      "type": "string",
+      "default": "wide"
+    },
+    "count": {
+      "type": "number",
+      "default": 8
+    },
+    "categoryId": {
+      "type": "number",
+      "default": 0
+    }
+  }
+}
