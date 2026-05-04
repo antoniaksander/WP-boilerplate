@@ -81,7 +81,7 @@ add_action('woocommerce_after_main_content', function () {
  * win in the cascade without needing !important.
  */
 add_action('wp_enqueue_scripts', function () {
-    if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) {
+    if (is_woocommerce() || is_cart() || is_checkout() || is_account_page() || has_block('sobe/product-carousel')) {
         wp_enqueue_style(
             config('theme.prefix') . '-woocommerce',
             \Roots\asset('resources/css/woocommerce.css')->uri(),

@@ -4,19 +4,21 @@ import { Navigation } from 'swiper/modules';
 document.addEventListener('DOMContentLoaded', () => {
   const carousels = document.querySelectorAll('.product-carousel-swiper');
 
-  carousels.forEach((el) => {
-    new Swiper(el, {
-      modules: [Navigation],
-      slidesPerView: 'auto',
-      spaceBetween: 16,
-      navigation: {
-        nextEl: el.querySelector('.swiper-button-next'),
-        prevEl: el.querySelector('.swiper-button-prev'),
-      },
-      breakpoints: {
-        768: { spaceBetween: 24 },
-        1024: { spaceBetween: 32 },
-      },
-    });
+  new Swiper(el, {
+    modules: [Navigation],
+    // Mobile: Show 1 full card and a "peek" of the next card to imply swiping
+    slidesPerView: 3,
+    spaceBetween: 16,
+    // loop: true,
+    navigation: {
+      nextEl: el.querySelector('.carousel-btn-next'),
+      prevEl: el.querySelector('.carousel-btn-prev'),
+    },
+    breakpoints: {
+      // Tablet: 3 cards side-by-side
+      768: { slidesPerView: 3, spaceBetween: 24 },
+      // Desktop: 4 cards side-by-side
+      1024: { slidesPerView: 4, spaceBetween: 32 },
+    },
   });
 });
