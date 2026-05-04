@@ -149,14 +149,6 @@ add_filter('body_class', function (array $classes): array {
     return $classes;
 });
 
-add_filter('body_class', function (array $classes): array {
-    $pfx = config('theme.prefix');
-    if (get_theme_mod("{$pfx}_product_card_layout", 'layout-1') === 'layout-2') {
-        $classes[] = "{$pfx}-layout-2";
-    }
-    return $classes;
-});
-
 /**
  * Hybrid Model hook management.
  *
@@ -168,8 +160,7 @@ add_filter('body_class', function (array $classes): array {
  * the hook bus stays open for plugins (quick-view, badges, BNPL, etc.).
  */
 add_action('after_setup_theme', function () {
-    $pfx    = config('theme.prefix');
-    $layout = get_theme_mod("{$pfx}_product_card_layout", 'layout-1');
+    $pfx = config('theme.prefix');
 
     // ── Tier 1/2: Blade owns the product card DOM shell ────────────────────
 
@@ -187,6 +178,9 @@ add_action('after_setup_theme', function () {
     // Title — Blade renders <h2> wrapped in its own <a href> in Zone B.
     remove_action('woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10);
 
+    // Add-to-cart button removed from all product cards globally.
+    remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10);
+
     // ── Tier 1: Blade owns the PDP title ───────────────────────────────────
     // content-single-product.blade.php renders <h1> above woocommerce_single_product_summary.
     remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_title', 5);
@@ -200,7 +194,7 @@ add_action('after_setup_theme', function () {
     // Rendered via wc_format_content() in content-single-product.blade.php.
     remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
 
-    // ── Brand label (all layouts) ───────────────────────────────────────────
+    // ── Brand label ─────────────────────────────────────────────────────────
     // Fires at priority 5, before the title link rendered by Blade.
     add_action('woocommerce_shop_loop_item_title', function () {
         global $product;
@@ -210,17 +204,9 @@ add_action('after_setup_theme', function () {
         }
     }, 5);
 
-    // ── Layout-specific hook logic ──────────────────────────────────────────
-    if ($layout === 'layout-1') {
-        // Stars at priority 4 appear before price (priority 10) in Zone B.
-        remove_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 5);
-        add_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 4);
-
-    } elseif ($layout === 'layout-2') {
-        // Harrods: clean brand/title/price — no button, no stars.
-        remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10);
-        remove_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 5);
-    }
+    // Stars at priority 4 appear before price (priority 10) in Zone B.
+    remove_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 5);
+    add_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 4);
 }, 22);
 
 /**
