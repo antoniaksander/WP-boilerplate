@@ -121,20 +121,32 @@ export default function Edit({ attributes, setAttributes }) {
     lineHeight: 1.6,
   };
 
-  const ctaPreviewStyle = {
-    display: 'inline-block',
-    padding: '0.75rem 1.5rem',
-    background: ctaType?.includes('dark') ? '#1a1a2e' : '#f4f3f2',
-    color: ctaType?.includes('dark') ? '#f4f3f2' : '#1a1a2e',
-    borderRadius: '0.5rem',
-    fontWeight: 600,
-    fontSize: '0.875rem',
-    textDecoration: 'none',
-    cursor: 'pointer',
-    ...(ctaType?.includes('outline')
-      ? { background: 'transparent', border: '2px solid currentColor' }
-      : {}),
-  };
+  const isLinkStyle = ctaType?.startsWith('link-');
+  const ctaPreviewStyle = isLinkStyle
+    ? {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.375rem',
+        fontWeight: 500,
+        fontSize: '0.875rem',
+        color: ctaType === 'link-dark' ? '#1a1a2e' : '#f4f3f2',
+        textDecoration: 'none',
+        padding: 0,
+      }
+    : {
+        display: 'inline-block',
+        padding: '0.75rem 1.5rem',
+        background: ctaType?.includes('dark') ? '#1a1a2e' : '#f4f3f2',
+        color: ctaType?.includes('dark') ? '#f4f3f2' : '#1a1a2e',
+        borderRadius: '0.5rem',
+        fontWeight: 600,
+        fontSize: '0.875rem',
+        textDecoration: 'none',
+        cursor: 'pointer',
+        ...(ctaType?.includes('outline')
+          ? { background: 'transparent', border: '2px solid currentColor' }
+          : {}),
+      };
 
   return (
     <>
@@ -186,6 +198,14 @@ export default function Edit({ attributes, setAttributes }) {
                 {
                   label: __('Dark Outline — for light backgrounds', 'sage'),
                   value: 'btn-outline-dark',
+                },
+                {
+                  label: __('Link — Dark (for light backgrounds)', 'sage'),
+                  value: 'link-dark',
+                },
+                {
+                  label: __('Link — Light (for dark backgrounds)', 'sage'),
+                  value: 'link-light',
                 },
               ]}
               onChange={(val) => setAttributes({ ctaType: val })}

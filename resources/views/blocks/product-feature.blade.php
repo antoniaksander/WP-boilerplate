@@ -13,7 +13,10 @@
   $heading   = $attributes['heading']   ?? '';
   $paragraph = $attributes['paragraph'] ?? '';
   $ctaText   = $attributes['ctaText']   ?? '';
-  $ctaUrl = !empty($attributes['ctaUrl']) ? $attributes['ctaUrl'] : $productUrl;
+  $ctaUrl    = !empty($attributes['ctaUrl']) ? $attributes['ctaUrl'] : $productUrl;
+  $ctaType   = $attributes['ctaType']   ?? 'btn-dark';
+  $allowedCtaTypes = ['btn-dark', 'btn-light', 'btn-outline-dark', 'btn-outline-light', 'link-dark', 'link-light'];
+  $ctaType   = in_array($ctaType, $allowedCtaTypes, true) ? $ctaType : 'btn-dark';
 
   $showImage  = $attributes['showProductImage'] ?? true;
   $showTitle  = $attributes['showProductTitle'] ?? true;
@@ -87,12 +90,9 @@
 
       @if ($ctaText && $ctaUrl)
         <div>
-          <a
-            href="{{ esc_url($ctaUrl) }}"
-            class=" transition-colors duration-200"
-          >
-            {{ esc_html($ctaText) }}
-          </a>
+          <x-button :url="esc_url($ctaUrl)" :type="$ctaType">
+            {!! wp_kses_post($ctaText) !!}
+          </x-button>
         </div>
       @endif
 

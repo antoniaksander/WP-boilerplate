@@ -2,9 +2,7 @@ import Swiper from 'swiper';
 import { Navigation } from 'swiper/modules';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const carousels = document.querySelectorAll('.product-carousel-swiper');
-
-  carousels.forEach((el) => {
+  document.querySelectorAll('.product-carousel-swiper').forEach((el) => {
     const wrap = el.closest('.sobe-product-carousel');
 
     new Swiper(el, {
@@ -17,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         prevEl: wrap.querySelector('.carousel-btn-prev'),
       },
       breakpoints: {
-        640: { slidesPerView: 3, spaceBetween: 16 },
+        640:  { slidesPerView: 3, spaceBetween: 16 },
         1024: { slidesPerView: 4, spaceBetween: 24 },
       },
     });

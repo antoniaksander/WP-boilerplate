@@ -15,6 +15,8 @@
       'btn-light'        => 'btn btn-light',
       'btn-outline-dark' => 'btn btn-outline-dark',
       'btn-outline-light'=> 'btn btn-outline-light',
+      'link-dark'        => 'btn-link-dark',
+      'link-light'       => 'btn-link-light',
   ];
 
   $classes = $variants[$type] ?? $variants['primary'];

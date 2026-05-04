@@ -6,7 +6,7 @@
   "title": "Product Carousel",
   "icon": "cart",
   "category": "sobe-blocks",
-  "description": "A swipeable carousel of WooCommerce products.",
+  "description": "A swipeable carousel of WooCommerce products with optional WebGL shimmer.",
   "supports": {
     "html": false,
     "anchor": true,
@@ -23,9 +23,35 @@
       "type": "number",
       "default": 8
     },
+    "orderBy": {
+      "type": "string",
+      "enum": ["latest", "featured", "best_selling", "top_rated", "on_sale", "random"],
+      "default": "latest"
+    },
     "categoryId": {
       "type": "number",
       "default": 0
+    },
+    "heading": {
+      "type": "string",
+      "default": ""
+    },
+    "paragraph": {
+      "type": "string",
+      "default": ""
+    },
+    "linkText": {
+      "type": "string",
+      "default": ""
+    },
+    "linkUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "linkType": {
+      "type": "string",
+      "enum": ["btn-dark", "btn-light", "btn-outline-dark", "btn-outline-light", "link-dark", "link-light"],
+      "default": "btn-dark"
     }
   }
 }

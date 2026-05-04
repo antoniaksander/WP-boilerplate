@@ -1,6 +1,4 @@
-// The carousel section carries the `.woocommerce` class so product card CSS
-// (centering, brand label, sale badge, etc.) inherits from woocommerce.css.
-// The WooCommerce grid rule on `ul.products` must not fight Swiper's flex layout.
+// ul.products must not fight Swiper's flex layout.
 .sobe-product-carousel.woocommerce ul.products {
   display: flex;
   flex-wrap: nowrap;
