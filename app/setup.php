@@ -17,7 +17,7 @@ use function Roots\view;
  */
 add_action('init', function () {
     $pfx = config('theme.prefix');
-    $custom_blocks = ['hero', 'callout', 'product-feature', 'brand-carousel', 'faq'];
+    $custom_blocks = ['hero', 'callout', 'product-feature', 'product-carousel', 'brand-carousel', 'faq'];
 
     foreach ($custom_blocks as $block_slug) {
         $asset_uri = \Roots\asset('resources/blocks/' . $block_slug . '/index.jsx')->uri();
