@@ -812,6 +812,8 @@ body.single-post {
     color: var(--c-btn-navy);
     padding: 0;
     line-height: inherit;
+    position: relative;
+    z-index: 0;
     transition: gap 200ms ease, opacity 200ms ease;
   }
 
@@ -847,6 +849,8 @@ body.single-post {
     color: var(--c-btn-cream);
     padding: 0;
     line-height: inherit;
+    position: relative;
+    z-index: 0;
     transition: gap 200ms ease, opacity 200ms ease;
   }
 
