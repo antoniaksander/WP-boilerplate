@@ -17,7 +17,7 @@ use function Roots\view;
  */
 add_action('init', function () {
     $pfx = config('theme.prefix');
-    $custom_blocks = ['hero', 'callout', 'product-feature', 'brand-carousel', 'faq'];
+    $custom_blocks = ['hero', 'callout', 'product-feature', 'product-carousel', 'brand-carousel', 'faq'];
 
     foreach ($custom_blocks as $block_slug) {
         $asset_uri = \Roots\asset('resources/blocks/' . $block_slug . '/index.jsx')->uri();
@@ -474,25 +474,6 @@ add_action('customize_register', function (\WP_Customize_Manager $wp_customize) 
         'section' => "{$pfx}_header_options",
         'mime_type' => 'image',
     ]));
-
-    // ── WooCommerce Product Catalog — card layout ───────────────────────────
-    $wp_customize->add_setting("{$pfx}_product_card_layout", [
-        'default' => 'layout-1',
-        'sanitize_callback' => function ($value) {
-            return in_array($value, ['layout-1', 'layout-2'], true) ? $value : 'layout-1';
-        },
-        'transport' => 'refresh',
-    ]);
-
-    $wp_customize->add_control("{$pfx}_product_card_layout", [
-        'label' => __('Product Card: Layout', 'sobe'),
-        'section' => 'woocommerce_product_catalog',
-        'type' => 'select',
-        'choices' => [
-            'layout-1' => __('Option 1 (Default)', 'sobe'),
-            'layout-2' => __('Option 2 (High-End/Harrods)', 'sobe'),
-        ],
-    ]);
 
     $wp_customize->add_setting("{$pfx}_product_card_hover", [
         'default' => 'zoom',

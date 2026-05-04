@@ -53,7 +53,7 @@
     },
     "ctaType": {
       "type": "string",
-      "enum": ["btn-light", "btn-dark", "btn-outline-light", "btn-outline-dark"],
+      "enum": ["btn-light", "btn-dark", "btn-outline-light", "btn-outline-dark", "link-light", "link-dark"],
       "default": "btn-light"
     },
     "headingColor": {

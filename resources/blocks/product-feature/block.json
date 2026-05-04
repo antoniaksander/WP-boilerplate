@@ -67,6 +67,11 @@
     "ctaUrl": {
       "type": "string",
       "default": ""
+    },
+    "ctaType": {
+      "type": "string",
+      "enum": ["btn-dark", "btn-light", "btn-outline-dark", "btn-outline-light", "link-dark", "link-light"],
+      "default": "btn-dark"
     }
   }
 }

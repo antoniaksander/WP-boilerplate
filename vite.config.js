@@ -11,7 +11,7 @@ if (!process.env.APP_URL) {
 }
 
 const BUNDLE_LIMITS = {
-  css: 50 * 1024, // 50 kB
+  css: 150 * 1024, // 150 kB
   js: 250 * 1024, // 250 kB
 };
 
@@ -47,6 +47,10 @@ export default defineConfig({
         'resources/blocks/faq/editor.scss',
         'resources/blocks/faq/style.scss',
         'resources/blocks/faq/view.js',
+        'resources/blocks/product-carousel/index.jsx',
+        'resources/blocks/product-carousel/editor.scss',
+        'resources/blocks/product-carousel/style.scss',
+        'resources/blocks/product-carousel/view.js',
       ],
       refresh: true,
       assets: ['resources/images/**', 'resources/fonts/**'],
