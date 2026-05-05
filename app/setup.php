@@ -275,6 +275,7 @@ add_action('after_setup_theme', function () {
      */
     register_nav_menus([
         'primary_navigation' => __('Primary Navigation', 'sobe'),
+        'footer_navigation'  => __('Footer Navigation', 'sobe'),
     ]);
 
     /**
@@ -474,6 +475,31 @@ add_action('customize_register', function (\WP_Customize_Manager $wp_customize) 
         'section' => "{$pfx}_header_options",
         'mime_type' => 'image',
     ]));
+
+    // ── Footer ─────────────────────────────────────────────────────────────
+    $wp_customize->add_section("{$pfx}_footer_options", [
+        'title'    => __('Footer Options', 'sobe'),
+        'priority' => 31,
+    ]);
+
+    $wp_customize->add_setting("{$pfx}_footer_layout", [
+        'default'           => 'layout-2',
+        'sanitize_callback' => function ($value) {
+            $allowed = ['layout-2', 'none'];
+            return in_array($value, $allowed, true) ? $value : 'layout-2';
+        },
+        'transport' => 'refresh',
+    ]);
+
+    $wp_customize->add_control("{$pfx}_footer_layout", [
+        'label'   => __('Footer: Layout', 'sobe'),
+        'section' => "{$pfx}_footer_options",
+        'type'    => 'select',
+        'choices' => [
+            'layout-2' => __('Minimal (Brand + Widgets)', 'sobe'),
+            'none'     => __('None (Hidden)', 'sobe'),
+        ],
+    ]);
 
     $wp_customize->add_setting("{$pfx}_product_card_hover", [
         'default' => 'zoom',
