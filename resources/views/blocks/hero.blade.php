@@ -31,7 +31,7 @@
 
   // Content wrapper — full static strings per variant to avoid w-full / w-1/2 conflict.
   $contentWrapClasses = match($alignment) {
-    'center'       => 'relative z-10 w-full px-6 lg:px-16 py-20 lg:py-32 flex flex-col items-center text-center',
+    'center'       => 'relative z-10 max-w-4xl mx-auto px-6 lg:px-16 py-20 lg:py-32 flex flex-col items-center text-center',
     'split-screen' => 'relative z-10 w-1/2 pl-6 lg:pl-16 pr-8 py-20 lg:py-32 flex flex-col items-start text-left',
     'editorial'    => 'relative z-10 w-full px-6 lg:px-16 py-20 lg:py-32 self-stretch flex flex-col items-start justify-between',
     default        => 'relative z-10 w-full px-6 lg:px-16 py-20 lg:py-32 flex flex-col items-start text-left',

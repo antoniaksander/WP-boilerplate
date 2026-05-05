@@ -99,36 +99,6 @@
   transform: none;
 }
 
-/* ── Layout 2 (Harrods: minimal editorial — brand / title / price only) ── */
-/* PHP hooks remove add-to-cart + stars; CSS adjusts spacing for the buttonless card */
-
-body.sobe-layout-2 .woocommerce ul.products li.product {
-  overflow: visible;
-  border-bottom: 2px solid transparent;
-  transition:
-    border-color 300ms ease,
-    box-shadow 200ms ease,
-    transform 200ms ease;
-}
-
-body.sobe-layout-2 .woocommerce ul.products li.product:hover {
-  /* border-bottom-color: var(--wc-button-bg); */
-  transform: none;
-  box-shadow: none;
-}
-
-body.sobe-layout-2 .woocommerce ul.products li.product .price {
-  padding-bottom: 1.25rem;
-}
-
-body.sobe-layout-2 .woocommerce ul.products li.product a img {
-  transition: opacity 300ms ease;
-}
-
-body.sobe-layout-2 .woocommerce ul.products li.product:hover a img {
-  transform: none;
-  opacity: 0.88;
-}
 
 .woocommerce ul.products li.product a img {
   width: 100%;
@@ -969,37 +939,18 @@ body.sobe-layout-2 .woocommerce ul.products li.product:hover a img {
   font-style: normal;
 }
 
-/* ── Add-to-cart button: hover-reveal on pointer devices only ── */
+/* ── Product card: center align text, stars, and price ── */
 
-@media (hover: hover) {
-  .woocommerce ul.products li.product .button {
-    opacity: 0;
-    transform: translateY(6px);
-    transition:
-      opacity 200ms ease,
-      transform 200ms ease,
-      background-color 150ms ease;
-  }
-
-  .woocommerce ul.products li.product:hover .button {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ── Layout 1: Center Align Everything ── */
-body:not(.sobe-layout-2) .woocommerce ul.products li.product {
+.woocommerce ul.products li.product {
   text-align: center;
 }
 
-/* Force the stars to center (they use margins to align) */
-body:not(.sobe-layout-2) .woocommerce ul.products li.product .star-rating {
+.woocommerce ul.products li.product .star-rating {
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Force the price block to center */
-body:not(.sobe-layout-2) .woocommerce ul.products li.product .price {
+.woocommerce ul.products li.product .price {
   justify-content: center;
 }
 

@@ -25,14 +25,21 @@ function initAnimationBus() {
       const type = el.dataset.animate;
 
       if (type === 'hero-content') {
-        gsap.from(el.querySelectorAll('h1, h2, p, a, button'), {
-          y: 50,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.15,
-          ease: 'power4.out',
-          delay: 0.2,
-        });
+        // fromTo with explicit opacity:1 target — avoids GSAP misreading computed
+        // opacity:0 when the WebGL canvas mix-blend-mode compositing group is active.
+        gsap.fromTo(
+          el.querySelectorAll('h1, h2, p, a, button'),
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            stagger: 0.15,
+            ease: 'power4.out',
+            delay: 0.2,
+            clearProps: 'opacity,y,transform',
+          },
+        );
         return;
       }
 

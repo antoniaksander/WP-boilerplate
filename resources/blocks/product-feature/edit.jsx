@@ -18,6 +18,7 @@ export default function Edit({ attributes, setAttributes }) {
     paragraph,
     ctaText,
     ctaUrl,
+    ctaType,
   } = attributes;
 
   const blockProps = useBlockProps({ className: 'sobe-product-feature' });
@@ -83,16 +84,31 @@ export default function Edit({ attributes, setAttributes }) {
     border: '2px dashed #ddd',
   };
 
-  const ctaPreviewStyle = {
-    display: 'inline-block',
-    padding: '0.5rem 1.25rem',
-    background: '#1a1a2e',
-    color: '#fff',
-    borderRadius: '4px',
-    fontSize: '14px',
-    fontWeight: 600,
-    textDecoration: 'none',
-  };
+  const isLinkCta = ctaType?.startsWith('link-');
+  const ctaPreviewStyle = isLinkCta
+    ? {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.375rem',
+        fontWeight: 500,
+        fontSize: '14px',
+        color: ctaType === 'link-dark' ? '#1a1a2e' : '#f4f3f2',
+        textDecoration: 'none',
+        padding: 0,
+      }
+    : {
+        display: 'inline-block',
+        padding: '0.5rem 1.25rem',
+        background: ctaType?.includes('light') ? '#f4f3f2' : '#1a1a2e',
+        color: ctaType?.includes('light') ? '#1a1a2e' : '#fff',
+        borderRadius: '4px',
+        fontSize: '14px',
+        fontWeight: 600,
+        textDecoration: 'none',
+        ...(ctaType?.includes('outline')
+          ? { background: 'transparent', border: '2px solid currentColor' }
+          : {}),
+      };
 
   const hiddenBadgeStyle = {
     fontSize: '10px',
@@ -220,6 +236,23 @@ export default function Edit({ attributes, setAttributes }) {
               onChange={(val) => setAttributes({ ctaUrl: val })}
               type="url"
               placeholder={product?.link ? product.link : 'https://'}
+              __nextHasNoMarginBottom
+              __next40pxDefaultSize
+            />
+          </PanelRow>
+          <PanelRow>
+            <SelectControl
+              label={__('Button Style', 'sobe')}
+              value={ctaType ?? 'btn-dark'}
+              options={[
+                { label: __('Button — Dark',          'sobe'), value: 'btn-dark'          },
+                { label: __('Button — Light',         'sobe'), value: 'btn-light'         },
+                { label: __('Button — Outline Dark',  'sobe'), value: 'btn-outline-dark'  },
+                { label: __('Button — Outline Light', 'sobe'), value: 'btn-outline-light' },
+                { label: __('Link — Dark',            'sobe'), value: 'link-dark'         },
+                { label: __('Link — Light',           'sobe'), value: 'link-light'        },
+              ]}
+              onChange={(val) => setAttributes({ ctaType: val })}
               __nextHasNoMarginBottom
               __next40pxDefaultSize
             />
