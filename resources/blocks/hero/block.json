@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "title": "Hero",
   "icon": "cover-image",
-  "category": "sobe-blocks",
+  "category": "sobe-general",
   "description": "Full-bleed hero section with background image, animated content, and optional WebGL cursor effect.",
   "example": {
     "attributes": {

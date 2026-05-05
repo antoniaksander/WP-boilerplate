@@ -4,7 +4,7 @@
   "name": "sobe/callout",
   "version": "0.1.0",
   "title": "Callout",
-  "category": "sobe-blocks",
+  "category": "sobe-general",
   "description": "A highlighted content section with optional CTA.",
   "textdomain": "sage",
   "supports": {

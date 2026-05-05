@@ -3,7 +3,7 @@
   "name": "sobe/faq",
   "version": "1.0.0",
   "title": "FAQ",
-  "category": "sobe-blocks",
+  "category": "sobe-general",
   "apiVersion": 3,
   "description": "Accordion-style FAQ block with animated expand/collapse.",
   "icon": "editor-help",

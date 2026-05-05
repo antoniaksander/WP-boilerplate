@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "title": "Brand Carousel",
   "icon": "screenoptions",
-  "category": "sobe-blocks",
+  "category": "sobe-sliders",
   "description": "Endless CSS marquee of brand logos with WebGL liquid-shimmer hover effect.",
   "example": {
     "attributes": {
