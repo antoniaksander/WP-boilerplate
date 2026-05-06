@@ -17,7 +17,10 @@ use function Roots\view;
  */
 add_action('init', function () {
     $pfx = config('theme.prefix');
-    $custom_blocks = ['hero', 'callout', 'product-feature', 'product-carousel', 'brand-carousel', 'faq'];
+    $manifest_path = resource_path('blocks/blocks-manifest.json');
+    $custom_blocks = is_readable($manifest_path)
+        ? array_keys(json_decode(file_get_contents($manifest_path), true) ?? [])
+        : [];
 
     foreach ($custom_blocks as $block_slug) {
         $asset_uri = \Roots\asset('resources/blocks/' . $block_slug . '/index.jsx')->uri();
@@ -157,15 +160,15 @@ add_filter('allowed_block_types_all', function ($allowed_blocks, $editor_context
     return $allowed;
 }, 10, 2);
 
+// When adding a category here, also update VALID_CATEGORIES in resources/scripts/make-block.js.
 add_filter('block_categories_all', function ($categories) {
-    $pfx = config('theme.prefix');
-    array_unshift($categories, [
-        'slug'  => "{$pfx}-blocks",
-        'title' => ucfirst($pfx) . ' Components',
-        'icon'  => 'star-filled',
-    ]);
-
-    return $categories;
+    $custom = [
+        ['slug' => 'sobe-general',     'title' => __('Sobe General', 'sobe'),     'icon' => 'layout'],
+        ['slug' => 'sobe-woocommerce', 'title' => __('Sobe WooCommerce', 'sobe'), 'icon' => 'cart'],
+        ['slug' => 'sobe-sliders',     'title' => __('Sobe Sliders', 'sobe'),     'icon' => 'slides'],
+        ['slug' => 'sobe-content',     'title' => __('Sobe Content', 'sobe'),     'icon' => 'text'],
+    ];
+    return array_merge($custom, $categories);
 });
 
 add_action('enqueue_block_editor_assets', function () {
@@ -275,6 +278,7 @@ add_action('after_setup_theme', function () {
      */
     register_nav_menus([
         'primary_navigation' => __('Primary Navigation', 'sobe'),
+        'footer_navigation'  => __('Footer Navigation', 'sobe'),
     ]);
 
     /**
@@ -474,6 +478,31 @@ add_action('customize_register', function (\WP_Customize_Manager $wp_customize) 
         'section' => "{$pfx}_header_options",
         'mime_type' => 'image',
     ]));
+
+    // ── Footer ─────────────────────────────────────────────────────────────
+    $wp_customize->add_section("{$pfx}_footer_options", [
+        'title'    => __('Footer Options', 'sobe'),
+        'priority' => 31,
+    ]);
+
+    $wp_customize->add_setting("{$pfx}_footer_layout", [
+        'default'           => 'layout-2',
+        'sanitize_callback' => function ($value) {
+            $allowed = ['layout-2', 'none'];
+            return in_array($value, $allowed, true) ? $value : 'layout-2';
+        },
+        'transport' => 'refresh',
+    ]);
+
+    $wp_customize->add_control("{$pfx}_footer_layout", [
+        'label'   => __('Footer: Layout', 'sobe'),
+        'section' => "{$pfx}_footer_options",
+        'type'    => 'select',
+        'choices' => [
+            'layout-2' => __('Minimal (Brand + Widgets)', 'sobe'),
+            'none'     => __('None (Hidden)', 'sobe'),
+        ],
+    ]);
 
     $wp_customize->add_setting("{$pfx}_product_card_hover", [
         'default' => 'zoom',

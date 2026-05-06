@@ -1,7 +1,5 @@
-<footer class="border-t border-black/5 mt-auto">
-  @if (is_active_sidebar('sidebar-footer'))
-    <div class="container mx-auto px-4 py-12">
-      @php dynamic_sidebar('sidebar-footer'); @endphp
+<footer class="bg-surface-2 border-t border-border py-8">
+    <div class="container mx-auto text-center text-text-muted text-sm">
+        &copy; {{ date('Y') }} {{ get_bloginfo('name') }}
     </div>
-  @endif
 </footer>

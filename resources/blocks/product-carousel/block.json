@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "title": "Product Carousel",
   "icon": "cart",
-  "category": "sobe-blocks",
+  "category": "sobe-woocommerce",
   "description": "A swipeable carousel of WooCommerce products with optional WebGL shimmer.",
   "supports": {
     "html": false,

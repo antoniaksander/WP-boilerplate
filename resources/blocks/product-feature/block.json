@@ -4,7 +4,7 @@
   "name": "sobe/product-feature",
   "version": "0.2.0",
   "title": "Product Feature",
-  "category": "sobe-blocks",
+  "category": "sobe-woocommerce",
   "description": "Two-column product showcase with editable content.",
   "textdomain": "sobe",
   "supports": {
