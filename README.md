@@ -32,7 +32,7 @@ Before installing, ensure your local environment meets these requirements:
 
 Clone the repository into your WordPress themes folder, then run:
 
-```bash
+````bash
 # Install Node dependencies (Vite, Tailwind, WP Scripts)
 npm install
 
@@ -43,6 +43,46 @@ composer install
 npm run dev
 
 Note: The initial npm install may take a few minutes as it downloads the @wordpress/scripts packages.
+
+## Creating a New Block
+
+We use a hybrid block architecture: React for the editor UI, Blade for frontend rendering.
+
+```bash
+# Scaffold a new block
+npm run make:block -- my-block-name
+
+# With a specific category (default: sobe-general)
+npm run make:block -- my-block-name --category=sobe-woocommerce
+Categories:
+
+sobe-general — Default. Hero, callout, FAQ, content sections.
+
+sobe-woocommerce — Product carousels, feature grids, shop components.
+
+sobe-sliders — Marquees, carousels, swipeable galleries.
+
+sobe-content — Text-heavy layouts, editorial patterns.
+
+The scaffold creates:
+
+resources/blocks/{slug}/ — Block registration, React edit UI, styles
+
+resources/views/blocks/{slug}.blade.php — Server-side render template
+
+After scaffolding:
+
+Define your attributes in block.json
+
+Build the editor UI in edit.jsx (RichText, MediaUpload, InspectorControls, etc.)
+
+Style the editor experience in editor.scss
+
+Style the frontend in style.scss
+
+Write the Blade template in resources/views/blocks/{slug}.blade.php
+
+Important: The save.jsx returns null — this is intentional. WordPress never uses the client-side save output. The Blade template renders everything via render_callback in app/setup.php.
 
 AI-Ready Development
 This repository has a CLAUDE.md file. If you use AI coding assistants like Claude Code, Cursor, or GitHub Copilot, send me an email with your github profile and I'll pass you the CLAUDE.md and other markup files.
@@ -59,4 +99,4 @@ I very much welcome community contributions, but please read the architectural l
 
 License
 Copyright (c) 2026 Sander Antoniak and Roots Software LLC.
-```
+````

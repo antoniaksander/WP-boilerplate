@@ -1,7 +1,5 @@
-@php
-    $footerLayout = get_theme_mod(config('theme.prefix') . '_footer_layout', 'layout-1');
-@endphp
-
-@if ($footerLayout !== 'none')
-    @include('sections.footer-' . $footerLayout)
-@endif
+<footer class="bg-surface-2 border-t border-border py-8">
+    <div class="container mx-auto text-center text-text-muted text-sm">
+        &copy; {{ date('Y') }} {{ get_bloginfo('name') }}
+    </div>
+</footer>
