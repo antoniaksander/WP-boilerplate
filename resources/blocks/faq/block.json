@@ -32,6 +32,7 @@
     }
   },
   "supports": {
+    "html": false,
     "anchor": true,
     "className": true,
     "align": ["wide", "full"]
