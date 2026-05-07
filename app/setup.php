@@ -291,19 +291,54 @@ add_filter('theme_file_path', function ($path, $file) {
 }, 10, 2);
 
 /**
- * Enqueue fonts in head for priority loading.
+ * Preload variable fonts before the @font-face declaration fires.
+ * Priority 0 ensures preload hints land before all other wp_head output,
+ * letting the browser start fetching fonts during HTML parse rather than
+ * waiting for CSS parse — reduces FOUT window and CLS from font-swap reflow.
+ *
+ * Guards with file_exists() so forked projects that replace the boilerplate
+ * fonts don't emit broken preload links pointing to missing files.
  *
  * @return void
  */
 add_action('wp_head', function () {
+    $themeDir = get_stylesheet_directory();
     $themeUrl = get_stylesheet_directory_uri();
-    $satoshiUrl = $themeUrl.'/fonts/Satoshi-Variable.woff2';
-    $satoshiFace = "@font-face{font-family:'Satoshi';src:url('{$satoshiUrl}')format('woff2');font-weight:300 900;font-display:swap;font-style:normal}";
+    $fonts    = ['Satoshi-Variable.woff2', 'CabinetGrotesk-Variable.woff2'];
 
-    $cabinetUrl = $themeUrl.'/fonts/CabinetGrotesk-Variable.woff2';
-    $cabinetFace = "@font-face{font-family:'CabinetGrotesk';src:url('{$cabinetUrl}')format('woff2');font-weight:100 900;font-display:swap;font-style:normal}";
+    foreach ($fonts as $font) {
+        if (file_exists($themeDir . '/fonts/' . $font)) {
+            echo '<link rel="preload" as="font" type="font/woff2" crossorigin href="' . esc_attr($themeUrl . '/fonts/' . $font) . '">';
+        }
+    }
+}, 0);
 
-    echo '<style>'.$satoshiFace.$cabinetFace.'</style>';
+/**
+ * Inline @font-face declarations for fonts bundled at <theme>/fonts/.
+ *
+ * Guards with file_exists() so forked projects that swap out the boilerplate
+ * fonts (or move them to a CDN) don't emit broken @font-face src() URLs.
+ *
+ * @return void
+ */
+add_action('wp_head', function () {
+    $themeDir = get_stylesheet_directory();
+    $themeUrl = get_stylesheet_directory_uri();
+    $faces    = '';
+
+    if (file_exists($themeDir . '/fonts/Satoshi-Variable.woff2')) {
+        $url    = $themeUrl . '/fonts/Satoshi-Variable.woff2';
+        $faces .= "@font-face{font-family:'Satoshi';src:url('{$url}')format('woff2');font-weight:300 900;font-display:swap;font-style:normal}";
+    }
+
+    if (file_exists($themeDir . '/fonts/CabinetGrotesk-Variable.woff2')) {
+        $url    = $themeUrl . '/fonts/CabinetGrotesk-Variable.woff2';
+        $faces .= "@font-face{font-family:'CabinetGrotesk';src:url('{$url}')format('woff2');font-weight:100 900;font-display:swap;font-style:normal}";
+    }
+
+    if ($faces) {
+        echo '<style>' . $faces . '</style>';
+    }
 }, 1);
 
 /**
