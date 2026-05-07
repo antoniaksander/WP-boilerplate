@@ -26,7 +26,7 @@
   "site-footer": {
     "category": "sobe-layout"
   },
-  "sobe/catalog-filters": {
+  "catalog-filters": {
     "category": "sobe-woocommerce"
   }
 }
