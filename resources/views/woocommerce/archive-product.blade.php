@@ -36,9 +36,19 @@ the readme will list any important changes.
     {{-- Main Content Wrapper --}}
     <div class="shop-main {{ $showSidebar ? 'flex-1 min-w-0 order-1 lg:order-2' : 'w-full' }}">
 
+      <header class="woocommerce-products-header">
+        @if (apply_filters('woocommerce_show_page_title', true))
+          <h1 class="woocommerce-products-header__title page-title">{!! woocommerce_page_title(false) !!}</h1>
+        @endif
+
+        @php
+          do_action('woocommerce_archive_description')
+        @endphp
+      </header>
+
       @if ($showSidebar)
       <button
-        class="sobe-filter-mobile-trigger lg:hidden"
+        class="sobe-filter-mobile-trigger"
         data-open-filter-drawer
         type="button"
         aria-expanded="false"
@@ -50,16 +60,6 @@ the readme will list any important changes.
         {{ __('Filter', 'sobe') }}
       </button>
       @endif
-
-      <header class="woocommerce-products-header">
-        @if (apply_filters('woocommerce_show_page_title', true))
-          <h1 class="woocommerce-products-header__title page-title">{!! woocommerce_page_title(false) !!}</h1>
-        @endif
-
-        @php
-          do_action('woocommerce_archive_description')
-        @endphp
-      </header>
 
       @if (woocommerce_product_loop())
         {{-- Flex toolbar keeps result-count + ordering side-by-side without floats --}}
@@ -96,4 +96,30 @@ the readme will list any important changes.
     do_action('woocommerce_after_main_content');
     do_action('get_footer', 'shop');
   @endphp
+
+  @if ($showSidebar)
+  {{-- Mobile filter drawer — rendered at body level so it's not inside any widget wrapper --}}
+  <div
+    id="sobe-filter-drawer"
+    class="sobe-filter-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-label="{{ __('Product filters', 'sobe') }}"
+    hidden
+  >
+    <div class="sobe-filter-drawer__header">
+      <span>{{ __('Filter products', 'sobe') }}</span>
+      <button
+        class="sobe-filter-drawer__close"
+        data-close-filter-drawer
+        aria-label="{{ __('Close filters', 'sobe') }}"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="sobe-filter-drawer__body"></div>
+  </div>
+  @endif
 @endsection

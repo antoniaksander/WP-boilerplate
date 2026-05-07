@@ -8,33 +8,6 @@
   aria-label="{{ __('Product filters', 'sobe') }}"
 >
 
-  {{-- Price type (accordion, radio) --}}
-  <details class="sobe-accordion" @if (!$collapseByDefault) open @endif>
-    <summary class="sobe-accordion__trigger">{{ __('Price type', 'sobe') }}</summary>
-    <div class="sobe-accordion__panel">
-      <ul class="sobe-filter-list" role="radiogroup">
-        @foreach([
-          'all'        => __('All', 'sobe'),
-          'on_sale'    => __('On sale', 'sobe'),
-          'full_price' => __('Full price', 'sobe'),
-        ] as $val => $label)
-          <li class="sobe-filter-list__item">
-            <label class="sobe-radio">
-              <input
-                type="radio"
-                name="price_type"
-                value="{{ $val }}"
-                class="sobe-radio__input"
-                @if(($activeFilters['price_type'] ?? 'all') === $val) checked @endif
-              >
-              <span class="sobe-radio__label">{{ $label }}</span>
-            </label>
-          </li>
-        @endforeach
-      </ul>
-    </div>
-  </details>
-
   {{-- Active filter chips --}}
   <div class="sobe-filter-chips" data-filter-chips aria-label="{{ __('Active filters', 'sobe') }}">
     @if ($activeCatSlug)
@@ -78,6 +51,33 @@
     hidden
   >{{ __('Clear all', 'sobe') }}</button>
 
+  {{-- Price type (accordion, radio) --}}
+  <details class="sobe-accordion" @if (!$collapseByDefault) open @endif>
+    <summary class="sobe-accordion__trigger">{{ __('Price type', 'sobe') }}</summary>
+    <div class="sobe-accordion__panel">
+      <ul class="sobe-filter-list" role="radiogroup">
+        @foreach([
+          'all'        => __('All', 'sobe'),
+          'on_sale'    => __('On sale', 'sobe'),
+          'full_price' => __('Full price', 'sobe'),
+        ] as $val => $label)
+          <li class="sobe-filter-list__item">
+            <label class="sobe-radio">
+              <input
+                type="radio"
+                name="price_type"
+                value="{{ $val }}"
+                class="sobe-radio__input"
+                @if(($activeFilters['price_type'] ?? 'all') === $val) checked @endif
+              >
+              <span class="sobe-radio__label">{{ $label }}</span>
+            </label>
+          </li>
+        @endforeach
+      </ul>
+    </div>
+  </details>
+
   {{-- Categories (single-select radio) --}}
   @if ($showCategories && !empty($categories))
   <details class="sobe-accordion" @if (!$collapseByDefault) open @endif>
@@ -117,7 +117,7 @@
 
   {{-- Brands (multi-select checkbox) --}}
   @if ($showBrands && !empty($brands))
-  <details class="sobe-accordion" @if (!$collapseByDefault) open @endif>
+  <details class="sobe-accordion sobe-accordion--scrollable" @if (!$collapseByDefault) open @endif>
     <summary class="sobe-accordion__trigger">{{ __('Brands', 'sobe') }}</summary>
     <div class="sobe-accordion__panel">
       @if (count($brands) > 5)
@@ -131,7 +131,7 @@
           >
         </div>
       @endif
-      <ul class="sobe-filter-list sobe-filter-list--scrollable" data-filter-list="brands">
+      <ul class="sobe-filter-list" data-filter-list="brands">
         @php $activeBrands = (array) ($activeFilters[$brandsTaxonomy] ?? []); @endphp
         @foreach ($brands as $brand)
           <li class="sobe-filter-list__item">
@@ -268,28 +268,4 @@
   </details>
   @endif
 
-</div>
-
-{{-- Mobile filter drawer --}}
-<div
-  id="sobe-filter-drawer"
-  class="sobe-filter-drawer"
-  role="dialog"
-  aria-modal="true"
-  aria-label="{{ __('Product filters', 'sobe') }}"
-  hidden
->
-  <div class="sobe-filter-drawer__header">
-    <span>{{ __('Filter products', 'sobe') }}</span>
-    <button
-      class="sobe-filter-drawer__close"
-      data-close-filter-drawer
-      aria-label="{{ __('Close filters', 'sobe') }}"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-      </svg>
-    </button>
-  </div>
-  <div class="sobe-filter-drawer__body"></div>
 </div>

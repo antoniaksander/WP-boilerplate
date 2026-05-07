@@ -43,10 +43,30 @@ class CatalogFilters extends Composer
             } else {
                 $brandTerms = get_terms([
                     'taxonomy' => $brandsTaxonomy,
-                    'hide_empty' => true,
+                    'hide_empty' => false,
                     'orderby' => 'name',
                 ]);
-                $brands = is_wp_error($brandTerms) ? [] : $brandTerms;
+                $brands = is_wp_error($brandTerms) ? [] : (array) $brandTerms;
+            }
+
+            // Compute accurate published-product counts via a single JOIN query
+            if (! empty($brands)) {
+                $brandCountRows = $wpdb->get_results($wpdb->prepare(
+                    "SELECT t.term_id, COUNT(DISTINCT p.ID) AS cnt
+                     FROM {$wpdb->terms} t
+                     JOIN {$wpdb->term_taxonomy} tt ON tt.term_id = t.term_id AND tt.taxonomy = %s
+                     JOIN {$wpdb->term_relationships} tr ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                     JOIN {$wpdb->posts} p ON p.ID = tr.object_id
+                        AND p.post_type = 'product'
+                        AND p.post_status = 'publish'
+                     GROUP BY t.term_id",
+                    $brandsTaxonomy
+                ));
+                $brandCountMap = array_column($brandCountRows, 'cnt', 'term_id');
+                foreach ($brands as $brand) {
+                    $brand->count = (int) ($brandCountMap[$brand->term_id] ?? 0);
+                }
+                $brands = array_values(array_filter($brands, fn ($b) => $b->count > 0));
             }
         }
 
