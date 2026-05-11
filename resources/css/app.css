@@ -1248,3 +1248,51 @@ body.single-post {
   color: var(--c-accent-fg);
   border-color: var(--c-accent);
 }
+
+/* ── Page Hero ─────────────────────────────────────────────────────────────── */
+.sobe-page-hero {
+  position: relative;
+  width: 100%;
+  min-height: 50vh;
+  display: flex;
+  align-items: flex-end;
+  background-image: var(--_hero-bg);
+  background-size: cover;
+  background-position: center;
+}
+
+.sobe-page-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0 0 0 / 0.65) 0%,
+    rgba(0 0 0 / 0.2) 55%,
+    transparent 100%
+  );
+}
+
+.sobe-page-hero__inner {
+  position: relative;
+  z-index: 1;
+  padding-block: 3rem;
+  padding-inline: 1.5rem;
+  max-width: var(--max-width-standard);
+  margin-inline: auto;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .sobe-page-hero__inner {
+    padding-block: 5rem;
+    padding-inline: 2rem;
+  }
+}
+
+.sobe-page-hero__title {
+  color: var(--c-surface-invert-fg);
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.1;
+  margin: 0;
+  text-shadow: 0 1px 4px rgba(0 0 0 / 0.4);
+}

@@ -151,6 +151,19 @@ add_filter('script_loader_tag', function ($tag, $handle) {
 }, 10, 2);
 
 /**
+ * Register page hero post meta.
+ */
+add_action('init', function () {
+    register_post_meta('page', '_sobe_page_hero', [
+        'show_in_rest'  => true,
+        'single'        => true,
+        'type'          => 'boolean',
+        'default'       => false,
+        'auth_callback' => fn () => current_user_can('edit_posts'),
+    ]);
+});
+
+/**
  * Register product_brand taxonomy.
  */
 add_action('init', function () {
