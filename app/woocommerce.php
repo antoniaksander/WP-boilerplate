@@ -623,6 +623,14 @@ $filter_handler = function (): void {
         ];
     }
 
+    if (! empty($filter_state['product_tag'])) {
+        $tax_query[] = [
+            'taxonomy' => 'product_tag',
+            'field' => 'slug',
+            'terms' => sanitize_text_field($filter_state['product_tag']),
+        ];
+    }
+
     foreach ($filter_state as $key => $val) {
         if (strpos($key, 'filter_') !== 0) {
             continue;
@@ -698,6 +706,28 @@ $filter_handler = function (): void {
         $query_args['meta_query'] = $meta_query;
     }
 
+    // WooCommerce native search — preserve ?s= context during AJAX filtering.
+    $search = sanitize_text_field($filter_state['s'] ?? '');
+    if ($search) {
+        $query_args['s'] = $search;
+    }
+
+    // Apply WooCommerce catalog ordering so AJAX pages match the initial page order.
+    // Without this WP_Query defaults to post_date DESC, causing products to appear
+    // in a different sequence on page 2+ than on the server-rendered page 1.
+    $orderby_value = sanitize_key($filter_state['orderby'] ?? '');
+    if ($orderby_value) {
+        $_GET['orderby'] = $orderby_value;
+    }
+    if (WC()->query) {
+        $ordering = WC()->query->get_catalog_ordering_args();
+        $query_args['orderby'] = $ordering['orderby'];
+        $query_args['order']   = $ordering['order'];
+        if (! empty($ordering['meta_key'])) {
+            $query_args['meta_key'] = $ordering['meta_key'];
+        }
+    }
+
     $query = new \WP_Query($query_args);
 
     ob_start();
@@ -734,6 +764,7 @@ add_action('wp_enqueue_scripts', function (): void {
         return;
     }
     $pfx = config('theme.prefix');
+    $queried = get_queried_object();
     $params = [
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce("{$pfx}_nonce"),
@@ -741,5 +772,9 @@ add_action('wp_enqueue_scripts', function (): void {
         'removeLabel' => __('Remove filter', 'sobe'),
         'removeSymbol' => '&times;',
     ];
+    if (is_product_taxonomy() && isset($queried->taxonomy, $queried->slug)) {
+        $params['archiveTaxonomy'] = $queried->taxonomy;
+        $params['archiveTerm'] = $queried->slug;
+    }
     echo '<script>window.sobeCatalogParams = '.\wp_json_encode($params).';</script>';
 }, 20);

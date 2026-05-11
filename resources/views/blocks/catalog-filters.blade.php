@@ -117,7 +117,7 @@
 
   {{-- Brands (multi-select checkbox) --}}
   @if ($showBrands && !empty($brands))
-  <details class="sobe-accordion sobe-accordion--scrollable" @if (!$collapseByDefault) open @endif>
+  <details class="sobe-accordion sobe-accordion--scrollable" @if ($brandsOpenByDefault) open @endif>
     <summary class="sobe-accordion__trigger">{{ __('Brands', 'sobe') }}</summary>
     <div class="sobe-accordion__panel">
       @if (count($brands) > 5)

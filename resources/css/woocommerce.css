@@ -52,25 +52,47 @@
 
 /* Mobile (< 768px) */
 @media (max-width: 767.98px) {
-  body.sobe-catalog-mobile-columns-1 .woocommerce ul.products { --shop-cols: 1; }
-  body.sobe-catalog-mobile-columns-2 .woocommerce ul.products { --shop-cols: 2; }
+  body.sobe-catalog-mobile-columns-1 .woocommerce ul.products {
+    --shop-cols: 1;
+  }
+  body.sobe-catalog-mobile-columns-2 .woocommerce ul.products {
+    --shop-cols: 2;
+  }
 }
 
 /* Tablet (768px – 1023px) */
 @media (min-width: 768px) and (max-width: 1023.98px) {
-  body.sobe-catalog-tablet-columns-1 .woocommerce ul.products { --shop-cols: 1; }
-  body.sobe-catalog-tablet-columns-2 .woocommerce ul.products { --shop-cols: 2; }
-  body.sobe-catalog-tablet-columns-3 .woocommerce ul.products { --shop-cols: 3; }
+  body.sobe-catalog-tablet-columns-1 .woocommerce ul.products {
+    --shop-cols: 1;
+  }
+  body.sobe-catalog-tablet-columns-2 .woocommerce ul.products {
+    --shop-cols: 2;
+  }
+  body.sobe-catalog-tablet-columns-3 .woocommerce ul.products {
+    --shop-cols: 3;
+  }
 }
 
 /* Desktop (≥ 1024px) — Customizer-controlled, replaces WC .columns-N approach */
 @media (min-width: 1024px) {
-  body.sobe-catalog-desktop-columns-1 .woocommerce ul.products { --shop-cols: 1; }
-  body.sobe-catalog-desktop-columns-2 .woocommerce ul.products { --shop-cols: 2; }
-  body.sobe-catalog-desktop-columns-3 .woocommerce ul.products { --shop-cols: 3; }
-  body.sobe-catalog-desktop-columns-4 .woocommerce ul.products { --shop-cols: 4; }
-  body.sobe-catalog-desktop-columns-5 .woocommerce ul.products { --shop-cols: 5; }
-  body.sobe-catalog-desktop-columns-6 .woocommerce ul.products { --shop-cols: 6; }
+  body.sobe-catalog-desktop-columns-1 .woocommerce ul.products {
+    --shop-cols: 1;
+  }
+  body.sobe-catalog-desktop-columns-2 .woocommerce ul.products {
+    --shop-cols: 2;
+  }
+  body.sobe-catalog-desktop-columns-3 .woocommerce ul.products {
+    --shop-cols: 3;
+  }
+  body.sobe-catalog-desktop-columns-4 .woocommerce ul.products {
+    --shop-cols: 4;
+  }
+  body.sobe-catalog-desktop-columns-5 .woocommerce ul.products {
+    --shop-cols: 5;
+  }
+  body.sobe-catalog-desktop-columns-6 .woocommerce ul.products {
+    --shop-cols: 6;
+  }
 }
 
 .woocommerce ul.products li.product:hover {
@@ -78,10 +100,9 @@
   transform: none;
 }
 
-
 .woocommerce ul.products li.product a img {
   width: 100%;
-  /* height: 14rem; */
+  aspect-ratio: var(--wc-product-card-aspect-ratio, 3 / 4);
   object-fit: cover;
   display: block;
   transition: transform 300ms ease;
@@ -114,7 +135,9 @@
   cursor: pointer;
   transition: color var(--transition-fast);
 }
-.sobe-pagination__arrow:hover { color: var(--c-accent); }
+.sobe-pagination__arrow:hover {
+  color: var(--c-accent);
+}
 .sobe-pagination__arrow--disabled {
   opacity: 0.35;
   cursor: not-allowed;
@@ -502,7 +525,10 @@
 /* Overflow visible so the 1.5-slide peek effect shows adjacent slides.
    The .pdp-gallery wrapper clips at its own edges. */
 .pdp-swiper-main {
-  aspect-ratio: var(--pdp-gallery-aspect-ratio, 1 / 1); /* set via config/theme.php 'wc_gallery_aspect_ratio' */
+  aspect-ratio: var(
+    --pdp-gallery-aspect-ratio,
+    1 / 1
+  ); /* set via config/theme.php 'wc_gallery_aspect_ratio' */
   border-radius: 0.75rem;
   overflow: visible;
   position: relative;
@@ -918,6 +944,7 @@
 .sobe-product-image-wrapper {
   position: relative;
   overflow: hidden;
+  aspect-ratio: var(--wc-product-card-aspect-ratio, 3 / 4);
 }
 
 /* Disable the default zoom transform inside a swap wrapper */
@@ -934,7 +961,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   opacity: 0;
   transition: opacity 300ms ease;
 }
@@ -1304,6 +1331,13 @@
   transform: rotate(45deg);
 }
 
+/* Hide panel when accordion is closed. Without this, the div's default display:block
+   overrides the browser UA stylesheet that normally hides details content, causing
+   the panel to overflow into sibling elements and block pointer events. */
+.sobe-accordion:not([open]) > .sobe-accordion__panel {
+  display: none;
+}
+
 .sobe-accordion__panel {
   padding-bottom: var(--space-md);
   max-height: 320px;
@@ -1553,7 +1587,9 @@
   color: var(--c-text);
   cursor: pointer;
   margin-bottom: var(--space-md);
-  transition: border-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 @media (max-width: 1023px) {
@@ -1570,6 +1606,38 @@
 /* Scrollable brands accordion — reduces panel max-height to trigger overflow scroll */
 .sobe-accordion--scrollable .sobe-accordion__panel {
   max-height: 12rem;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+}
+
+/* Always-visible scrollbar so users can see the panel is scrollable (macOS hides overlay scrollbars) */
+.sobe-accordion--scrollable .sobe-accordion__panel::-webkit-scrollbar {
+  width: 5px;
+}
+.sobe-accordion--scrollable .sobe-accordion__panel::-webkit-scrollbar-track {
+  background: var(--c-surface-2, #f0f0f0);
+  border-radius: 3px;
+}
+.sobe-accordion--scrollable .sobe-accordion__panel::-webkit-scrollbar-thumb {
+  background: var(--c-border);
+  border-radius: 3px;
+}
+
+/* Bottom fade-out gradient — signals more content below without a scrollbar hint */
+.sobe-accordion--scrollable[open] {
+  position: relative;
+}
+.sobe-accordion--scrollable[open]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2.5rem;
+  background: linear-gradient(to bottom, transparent, var(--c-surface-1, #fff));
+  pointer-events: none;
+  border-radius: 0 0 var(--radius-sm, 4px) var(--radius-sm, 4px);
 }
 
 /* Hide empty widget_block sections in the sidebar (ghost sections from block extraction) */
@@ -1732,7 +1800,9 @@
   color: var(--c-text-muted);
   cursor: pointer;
   text-align: left;
-  transition: border-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .sobe-filter-clear-all:hover {

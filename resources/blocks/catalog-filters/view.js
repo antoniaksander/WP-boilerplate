@@ -7,6 +7,16 @@ import noUiSlider from 'nouislider';
   const root = document.querySelector('[data-catalog-filters]');
   if (!root) return;
 
+  const archiveKey = params.archiveTaxonomy?.startsWith('pa_')
+    ? 'filter_' + params.archiveTaxonomy.slice(3)
+    : params.archiveTaxonomy;
+
+  // Capture both the clean pathname and the initial query string once at load time.
+  // buildFilterUrl always uses _pageBase so history.pushState drift never "escapes"
+  // to /shop/ if wp_get_referer() fails and the server returns wrong pagination links.
+  const _pageBase = location.origin + location.pathname;
+  const _initSearch = new URLSearchParams(location.search);
+
   const DEBOUNCE_CHECKBOX = 300;
   const DEBOUNCE_PRICE = 500;
 
@@ -46,18 +56,66 @@ import noUiSlider from 'nouislider';
       }
     });
 
+    // Inject archive taxonomy context (e.g. /brand/nike/ → product_brand: "nike")
+    if (params.archiveTaxonomy && params.archiveTerm) {
+      if (!state[archiveKey] || (Array.isArray(state[archiveKey]) && state[archiveKey].length === 0)) {
+        state[archiveKey] = params.archiveTerm;
+      }
+    }
+
+    // Prefer the live WC ordering select; fall back to the initial page URL's orderby.
+    const wcOrderSelect = document.querySelector('.woocommerce-ordering select[name="orderby"]');
+    const orderby = wcOrderSelect?.value || _initSearch.get('orderby');
+    if (orderby) state.orderby = orderby;
+
+    // Preserve WC search query from the original page load (never changes mid-session).
+    const searchQuery = _initSearch.get('s');
+    if (searchQuery) state.s = searchQuery;
+
     return state;
   }
 
   function buildFilterUrl(state) {
-    const url = new URL(window.location.href);
+    // Always build from the original page path — never from window.location.href which
+    // may have drifted to /shop/ if a previous server response had a bad base URL.
+    const url = new URL(_pageBase);
 
-    url.search = '';
+    const sliderEl = root.querySelector('[data-range-slider]');
+    const defaultMin = parseFloat(sliderEl?.dataset.min ?? 0);
+    const defaultMax = parseFloat(sliderEl?.dataset.max ?? Infinity);
 
     for (const [key, val] of Object.entries(state)) {
       if (key === 'paged') continue; // handled below
+
+      // Skip the archive taxonomy term — it's implicit in the page path, not a filter param.
+      // Normalize to string for comparison so both string ('slug') and array (['slug']) forms match.
+      if (key === archiveKey) {
+        const slugs = Array.isArray(val) ? val : [val];
+        if (slugs.length === 1 && slugs[0] === params.archiveTerm) continue;
+        // User added extra brands — encode them as a filter param and move on.
+        url.searchParams.set('filter_' + key.replace(/^filter_/, ''), slugs.join('+'));
+        continue;
+      }
+
+      if (key === 'orderby') {
+        // Don't pollute the URL with the WC default — it's applied server-side anyway.
+        if (val && val !== 'menu_order') url.searchParams.set('orderby', val);
+        continue;
+      }
+      if (key === 's') {
+        if (val) url.searchParams.set('s', val);
+        continue;
+      }
       if (key === 'price_type') {
         if (val && val !== 'all') url.searchParams.set('price_type', val);
+        continue;
+      }
+      if (key === 'min_price') {
+        if (parseFloat(val) > defaultMin) url.searchParams.set('min_price', val);
+        continue;
+      }
+      if (key === 'max_price') {
+        if (parseFloat(val) < defaultMax) url.searchParams.set('max_price', val);
         continue;
       }
       if (Array.isArray(val)) {
@@ -73,24 +131,35 @@ import noUiSlider from 'nouislider';
 
   // ── AJAX fetch ──────────────────────────────────────────────────────────────
 
+  let _activeFetch = null;
+  let _fetchSeq = 0;
+
   async function fetchFiltered(state) {
+    if (_activeFetch) _activeFetch.abort();
+    _activeFetch = new AbortController();
+
     const body = new FormData();
     body.append('action', params.action);
     body.append('nonce', params.nonce);
     body.append('filter_state', JSON.stringify(state));
 
-    const res = await fetch(params.ajaxUrl, { method: 'POST', body });
+    const res = await fetch(params.ajaxUrl, { method: 'POST', body, signal: _activeFetch.signal });
     if (!res.ok) throw new Error(res.status);
     return res.json();
   }
 
   async function applyFilters(state) {
+    const mySeq = ++_fetchSeq;
+
     const grid = document.querySelector('.products');
     const paginationZone = document.querySelector('[data-pagination]');
     const countEl = document.querySelector('[data-result-count]');
 
     try {
       const data = await fetchFiltered(state);
+
+      // A newer request was dispatched while this one was in-flight — discard stale response.
+      if (mySeq !== _fetchSeq) return;
 
       if (grid && data.html !== undefined) {
         grid.innerHTML = data.html;
@@ -108,8 +177,18 @@ import noUiSlider from 'nouislider';
       if (data.filters) updateFilterCounts(data);
       updateClearAllVisibility(state);
       history.pushState({}, '', buildFilterUrl(state));
-    } catch (_err) {
-      // silently fail — page state unchanged
+
+      // Scroll to product listing so users see fresh results without manual scrolling.
+      const shopMain = document.querySelector('.shop-main');
+      const target = shopMain ?? grid;
+      if (target) {
+        const y = target.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: Math.max(0, y - 24), behavior: 'smooth' });
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        // silently fail — page state unchanged
+      }
     }
   }
 
@@ -125,6 +204,8 @@ import noUiSlider from 'nouislider';
     const sliderEl = root.querySelector('[data-range-slider]');
     const hasActive = Object.keys(state).some((k) => {
       const v = state[k];
+      if (k === archiveKey && v === params.archiveTerm) return false;
+      if (k === 'paged' || k === 'orderby' || k === 's') return false;
       if (k === 'min_price') {
         const defaultMin = parseFloat(sliderEl?.dataset.min ?? 0);
         return parseFloat(v) > defaultMin;
@@ -152,7 +233,7 @@ import noUiSlider from 'nouislider';
         parseFloat(sliderEl.dataset.max),
       ]);
     }
-    applyFilters({});
+    applyFilters(collectState());
   }
 
   clearAllBtn?.addEventListener('click', clearAllFilters);
@@ -234,8 +315,10 @@ import noUiSlider from 'nouislider';
     zone.innerHTML = '';
 
     for (const [key, val] of Object.entries(state)) {
+      if (key === archiveKey && val === params.archiveTerm) continue;
       if (key === 'min_price' || key === 'max_price') continue;
       if (key === 'price_type' && val === 'all') continue;
+      if (key === 'paged' || key === 'orderby' || key === 's') continue;
       const values = Array.isArray(val) ? val : [val];
       values.forEach((v) => {
         if (!v) return;

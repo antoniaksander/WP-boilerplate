@@ -35,19 +35,12 @@ class CatalogFilters extends Composer
 
         $brands = [];
         if ($showBrands && taxonomy_exists($brandsTaxonomy)) {
-            if (is_tax($brandsTaxonomy)) {
-                $currentTerm = get_queried_object();
-                $brands = ($currentTerm instanceof \WP_Term && $currentTerm->taxonomy === $brandsTaxonomy)
-                    ? [$currentTerm]
-                    : [];
-            } else {
-                $brandTerms = get_terms([
-                    'taxonomy' => $brandsTaxonomy,
-                    'hide_empty' => false,
-                    'orderby' => 'name',
-                ]);
-                $brands = is_wp_error($brandTerms) ? [] : (array) $brandTerms;
-            }
+            $brandTerms = get_terms([
+                'taxonomy' => $brandsTaxonomy,
+                'hide_empty' => false,
+                'orderby' => 'name',
+            ]);
+            $brands = is_wp_error($brandTerms) ? [] : (array) $brandTerms;
 
             // Compute accurate published-product counts via a single JOIN query
             if (! empty($brands)) {
@@ -114,6 +107,19 @@ class CatalogFilters extends Composer
 
         $activeFilters = $this->parseActiveFilters();
 
+        // On a brand archive page, pre-check the current brand and force-open the accordion
+        // so the user immediately sees which brand they're browsing and can scroll the list.
+        $brandsOpenByDefault = ! $collapseByDefault;
+        if ($showBrands && is_tax($brandsTaxonomy)) {
+            $currentTerm = get_queried_object();
+            if ($currentTerm instanceof \WP_Term && $currentTerm->taxonomy === $brandsTaxonomy) {
+                if (empty($activeFilters[$brandsTaxonomy])) {
+                    $activeFilters[$brandsTaxonomy] = [$currentTerm->slug];
+                }
+                $brandsOpenByDefault = true;
+            }
+        }
+
         return compact(
             'categories',
             'brands',
@@ -125,7 +131,8 @@ class CatalogFilters extends Composer
             'showAttributes',
             'showPriceRange',
             'collapseByDefault',
-            'brandsTaxonomy'
+            'brandsTaxonomy',
+            'brandsOpenByDefault'
         );
     }
 
