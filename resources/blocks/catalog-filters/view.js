@@ -167,6 +167,9 @@ import noUiSlider from 'nouislider';
 
       if (paginationZone && data.pagination_html !== undefined) {
         paginationZone.innerHTML = data.pagination_html;
+        document.dispatchEvent(new CustomEvent('sobe:pagination-updated', {
+          detail: { state, filterAction: params.action, filterNonce: params.nonce },
+        }));
       }
 
       if (countEl && data.count !== undefined) {
