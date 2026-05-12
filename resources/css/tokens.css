@@ -69,6 +69,12 @@
   --wc-card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.08);
   --wc-product-card-aspect-ratio: 1 / 1;
 
+  /* Product category grid block (WooCommerce) — spacing + motion from design tokens */
+  --sobe-cat-grid-gap: var(--space-md);
+  --sobe-cat-grid-radius: var(--radius-xl);
+  --sobe-cat-grid-min-cell: clamp(7.5rem, 18vw, 11rem);
+  --sobe-cat-grid-zoom-hover: 1.08;
+
   --wc-product-card-title-color: var(--c-heading);
   --wc-product-card-title-size: 1rem;
   --wc-product-card-brand-color: var(--c-text-muted);
