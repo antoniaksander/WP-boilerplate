@@ -1,3 +1,4 @@
+// All @wordpress/* accessed via wp.* globals — never import from '@wordpress/…'
 const { registerBlockType } = wp.blocks;
 
 import metadata from './block.json';
