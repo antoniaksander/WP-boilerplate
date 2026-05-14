@@ -1,71 +1,35 @@
-# WP Boilerplate
+# WP-boilerplate
 
-Sobe-branded thin infrastructure for WordPress agency themes. This repository is the upstream engine: block registration, Vite assets, minimal Blade shell, generic WordPress setup, WooCommerce support, and hardening.
+Thin shared infrastructure for Sobe agency WordPress themes. Not a full theme.
 
-The full working Sobe theme lives in `WP-boilerplate-demo`. Client projects can fork the demo once, then track this repository as `upstream` for infrastructure updates only.
+## What IS here
 
-## Repository Roles
+- Vite + Tailwind CSS asset pipeline
+- Manifest-driven block registration scaffold
+- Base WooCommerce hook scaffolding
+- Jest + PHPStan testing configs
+- CI/linting setup
 
-- `WP-boilerplate`: thin Sobe infrastructure. Use this as `upstream`.
-- `WP-boilerplate-demo`: rich Sobe starter with blocks, patterns, sidecart, dark mode, wishlist, headers, footers, and demo presentation. Fork once only.
-- Client theme: owns branding, templates, blocks, customizer, WooCommerce presentation, and business logic.
+## What is NOT here
 
-## Version Policy
+- Layout shells (header/footer blocks, app.blade.php layout)
+- SEO meta, WebGL, side-cart
+- Swiper/PhotoSwipe gallery logic
+- Demo content or client branding
+- Custom blocks (except generic infrastructure blocks)
+- Proprietary/client-specific blocks -> see private block library (`sobe-blocks-private`)
 
-- `v1.x.x` (`v1.0.0-rich-sobe-starter`): full theme with blocks, patterns, customizer, sidecart, and presentation features. Existing clients pin to this line. New clients should not use it.
-- `v2.x.x` (`v2.0.0-thin-infra`): infrastructure only, including the block system, asset pipeline, WooCommerce wrappers, setup, and hardening. New clients track this as `upstream`.
+## For client-specific work
 
-Existing rich clients should not blindly merge `upstream/main`. Cherry-pick specific security or infrastructure fixes from v2, or rebase intentionally during a maintenance window. See [Merge Strategy](docs/merge-strategy.md) for the detailed policy.
+- See `demo/sobe` branch for v1 reference (non-mergeable)
+- See `v1.0.0-rich-sobe-starter` tag for historical full-theme
+- Client repos fork from `main`, add presentation layer
+- Proprietary blocks belong in private block library
 
-## New Client Workflow
+## Block system
 
-```bash
-git clone <client-repo>
-cd <client-repo>
-git remote add upstream https://github.com/antoniaksander/WP-boilerplate.git
-npm run check:upstream
-```
+All blocks are manifest-driven. Run `npm run make:block -- your-block-name` to scaffold. See CONTRIBUTING.md for full SOP.
 
-Do not set `upstream` to `WP-boilerplate-demo`.
+## Upstream policy
 
-## Stack
-
-- PHP: Roots Acorn / Sage-style Blade theme structure
-- CSS/JS: Vite and Tailwind CSS v4
-- Blocks: dynamic Gutenberg blocks rendered with Blade
-- WooCommerce: generic support and wrapper hooks only
-
-## Install
-
-```bash
-npm install
-composer install
-npm run build
-```
-
-## Validate
-
-```bash
-npm test
-npm run check:patterns
-npm run build
-composer analyse
-```
-
-## What Belongs Here
-
-- Build and asset pipeline
-- Manifest-based dynamic block registration
-- Generic WordPress theme setup
-- Generic WooCommerce support
-- Security hardening
-- Minimal Blade shell
-- One example block proving the mechanism
-
-## What Does Not Belong Here
-
-- Client branding, fonts, tokens, headers, footers, and templates
-- Sidecart, wishlist, dark mode, search overlays, and customizer policy
-- Product brand taxonomies, catalog filters, load-more UX, and PDP presentation
-- WooCommerce template overrides
-- Client-specific blocks and patterns
+`main` accepts only generic infrastructure PRs. No client-specific presentation code.
