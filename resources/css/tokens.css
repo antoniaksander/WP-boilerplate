@@ -1,16 +1,153 @@
+/* Base design tokens. Client forks override brand values here. */
+
 :root {
   --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: var(--font-sans);
   --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
   --font-mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
 
   --c-background: #ffffff;
-  --c-surface: #f8fafc;
+  --c-surface-1: #ffffff;
+  --c-surface-2: #f8fafc;
+  --c-surface-3: #f1f5f9;
+  --c-surface-invert: #111827;
+  --c-surface-invert-fg: #ffffff;
   --c-text: #111827;
+  --c-text-muted: #64748b;
+  --c-text-subtle: #94a3b8;
   --c-heading: #030712;
-  --c-muted: #6b7280;
   --c-border: #e5e7eb;
   --c-ring: #2563eb;
+  --c-overlay: rgba(0, 0, 0, 0.5);
+  --c-primary: #111827;
+  --c-primary-fg: #ffffff;
+  --c-primary-hover: color-mix(in oklch, var(--c-primary) 82%, white);
+  --c-accent: #2563eb;
+  --c-accent-fg: #ffffff;
+  --c-accent-hover: color-mix(in oklch, var(--c-accent) 82%, black);
+  --c-sale: #dc2626;
+  --c-stars: #f59e0b;
+
+  --selection-bg: var(--c-primary);
+  --selection-fg: var(--c-primary-fg);
 
   --layout-content: 72rem;
   --layout-wide: 90rem;
+  --layout-standard: 90rem;
+  --layout-grid: 96rem;
+  --layout-reading: 60rem;
+
+  --space-xs: clamp(0.25rem, calc(0.206rem + 0.188vw), 0.375rem);
+  --space-sm: clamp(0.5rem, calc(0.412rem + 0.376vw), 0.75rem);
+  --space-md: clamp(0.75rem, calc(0.618rem + 0.564vw), 1.125rem);
+  --space-lg: clamp(1rem, calc(0.824rem + 0.751vw), 1.5rem);
+  --space-xl: clamp(1.5rem, calc(1.148rem + 1.502vw), 2.5rem);
+  --space-2xl: clamp(2.5rem, calc(1.972rem + 2.254vw), 4rem);
+  --space-3xl: clamp(4rem, calc(2.768rem + 5.258vw), 7.5rem);
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: clamp(1rem, calc(0.965rem + 0.15vw), 1.125rem);
+  --text-xl: clamp(1.125rem, calc(1.036rem + 0.376vw), 1.375rem);
+  --text-2xl: clamp(1.25rem, calc(1.118rem + 0.564vw), 1.625rem);
+  --text-3xl: clamp(1.5rem, calc(1.324rem + 0.751vw), 2rem);
+  --text-4xl: clamp(1.75rem, calc(1.486rem + 1.127vw), 2.5rem);
+  --text-5xl: clamp(2rem, calc(1.648rem + 1.502vw), 3rem);
+  --text-6xl: clamp(2.5rem, calc(1.972rem + 2.254vw), 4rem);
+  --text-7xl: clamp(3rem, calc(2.12rem + 3.756vw), 5.5rem);
+
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 6px rgba(15, 23, 42, 0.07), 0 2px 4px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.1), 0 4px 10px rgba(15, 23, 42, 0.04);
+  --shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.15), 0 8px 16px rgba(15, 23, 42, 0.08);
+
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal: 400;
+  --z-overlay: 500;
+  --z-toast: 600;
+
+  --sobe-duration: 200ms;
+  --transition-fast: var(--sobe-duration) ease;
+  --transition-base: 300ms ease;
+  --transition-slow: 500ms ease;
+
+  --cq-product-card-compact: 180px;
+
+  --wc-surface-bg: var(--c-surface-1);
+  --wc-surface-border: var(--c-border);
+  --wc-card-shadow-hover: var(--shadow-md);
+  --wc-product-card-aspect-ratio: 1 / 1;
+  --wc-product-card-title-color: var(--c-heading);
+  --wc-product-card-title-size: 1rem;
+  --wc-price-regular-color: var(--c-text);
+  --wc-price-sale-color: var(--c-sale);
+  --wc-price-compare-color: var(--c-text-subtle);
+  --wc-price-size: 0.9375rem;
+  --wc-rating-stars-color: var(--c-stars);
+  --wc-sale-badge-bg: var(--c-accent);
+  --wc-sale-badge-fg: var(--c-accent-fg);
+  --wc-button-bg: var(--c-primary);
+  --wc-button-fg: var(--c-primary-fg);
+  --wc-button-hover-bg: var(--c-primary-hover);
+  --wc-button-hover-fg: var(--c-primary-fg);
+  --wc-form-input-bg: var(--c-surface-1);
+  --wc-form-input-fg: var(--c-text);
+  --wc-form-border-color: var(--c-border);
+  --wc-form-focus-ring-color: var(--c-ring);
+  --wc-notice-bg: var(--c-surface-2);
+  --wc-notice-fg: var(--c-text);
+  --wc-notice-accent: var(--c-accent);
+}
+
+.dark {
+  --c-background: #0f172a;
+  --c-surface-1: #111827;
+  --c-surface-2: #1f2937;
+  --c-surface-3: #334155;
+  --c-surface-invert: #f8fafc;
+  --c-surface-invert-fg: #111827;
+  --c-text: #e5e7eb;
+  --c-text-muted: #94a3b8;
+  --c-text-subtle: #64748b;
+  --c-heading: #f8fafc;
+  --c-border: #334155;
+  --c-ring: #60a5fa;
+  --c-overlay: rgba(0, 0, 0, 0.7);
+  --c-primary: #f8fafc;
+  --c-primary-fg: #111827;
+  --c-primary-hover: color-mix(in oklch, var(--c-primary) 86%, black);
+  --c-accent: #60a5fa;
+  --c-accent-fg: #0f172a;
+  --c-accent-hover: color-mix(in oklch, var(--c-accent) 82%, white);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.45), 0 8px 16px rgba(0, 0, 0, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --sobe-duration: 0ms;
+  }
 }

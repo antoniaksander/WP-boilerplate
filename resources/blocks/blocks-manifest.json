@@ -1,5 +1,20 @@
 {
   "example": {
     "category": "sobe-general"
+  },
+  "hero": {
+    "category": "sobe-general"
+  },
+  "faq": {
+    "category": "sobe-general"
+  },
+  "product-carousel": {
+    "category": "sobe-woocommerce"
+  },
+  "site-header": {
+    "category": "sobe-layout"
+  },
+  "site-footer": {
+    "category": "sobe-layout"
   }
 }

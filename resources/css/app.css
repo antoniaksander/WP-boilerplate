@@ -1,30 +1,135 @@
 @import 'tailwindcss';
 @import './tokens.css';
 
+@source "../../app/**/*.php";
+@source "../**/*.blade.php";
+@source "../**/*.js";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --wp--style--global--content-size: var(--layout-content);
+  --wp--style--global--wide-size: var(--layout-wide);
+}
+
+body.single-post {
+  --wp--style--global--content-size: var(--layout-reading);
+}
+
+.is-layout-constrained > .alignfull {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
 @theme {
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
   --color-background: var(--c-background);
+  --color-surface-1: var(--c-surface-1);
+  --color-surface-2: var(--c-surface-2);
+  --color-surface-3: var(--c-surface-3);
+  --color-surface-invert: var(--c-surface-invert);
+  --color-surface-invert-fg: var(--c-surface-invert-fg);
   --color-text: var(--c-text);
+  --color-text-muted: var(--c-text-muted);
+  --color-text-subtle: var(--c-text-subtle);
   --color-heading: var(--c-heading);
   --color-border: var(--c-border);
   --color-ring: var(--c-ring);
+  --color-overlay: var(--c-overlay);
+  --color-primary: var(--c-primary);
+  --color-primary-fg: var(--c-primary-fg);
+  --color-primary-hover: var(--c-primary-hover);
+  --color-accent: var(--c-accent);
+  --color-accent-fg: var(--c-accent-fg);
+  --color-accent-hover: var(--c-accent-hover);
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
   --font-mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+
+  --font-size-xs: var(--text-xs);
+  --font-size-sm: var(--text-sm);
+  --font-size-base: var(--text-base);
+  --font-size-lg: var(--text-lg);
+  --font-size-xl: var(--text-xl);
+  --font-size-2xl: var(--text-2xl);
+  --font-size-3xl: var(--text-3xl);
+  --font-size-4xl: var(--text-4xl);
+  --font-size-5xl: var(--text-5xl);
+  --font-size-6xl: var(--text-6xl);
+  --font-size-7xl: var(--text-7xl);
+
+  --leading-none: 1;
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 6px rgba(15, 23, 42, 0.07), 0 2px 4px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.1), 0 4px 10px rgba(15, 23, 42, 0.04);
+  --shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.15), 0 8px 16px rgba(15, 23, 42, 0.08);
+
+  --max-width-reading: var(--layout-reading);
+  --max-width-standard: var(--layout-standard);
+  --max-width-grid: var(--layout-grid);
+
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+  --spacing-2xl: var(--space-2xl);
+  --spacing-3xl: var(--space-3xl);
+  --spacing-section: var(--space-3xl);
+
+  --max-width-xs: 20rem;
+  --max-width-sm: 24rem;
+  --max-width-md: 28rem;
+  --max-width-lg: 32rem;
+  --max-width-xl: 36rem;
+  --max-width-2xl: 42rem;
+  --max-width-3xl: 48rem;
 }
 
 @layer base {
   html {
-    background: var(--c-background);
+    background-color: var(--c-background);
     color: var(--c-text);
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+    scrollbar-gutter: stable;
   }
 
   body {
-    min-height: 100vh;
+    min-height: 100svh;
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 1rem;
+    font-size: var(--text-base);
     line-height: 1.6;
+    color: var(--c-text);
+    background-color: var(--c-background);
+    display: flex;
+    flex-direction: column;
   }
 
   h1,
@@ -34,7 +139,10 @@
   h5,
   h6 {
     color: var(--c-heading);
-    line-height: 1.2;
+    font-family: var(--font-heading);
+    font-weight: var(--font-bold);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-tight);
   }
 
   a {
@@ -45,23 +153,86 @@
     outline: 2px solid var(--c-ring);
     outline-offset: 2px;
   }
+
+  ::selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
+  }
 }
 
 @layer components {
-  #app {
-    width: min(100% - 2rem, var(--layout-content));
-    margin-inline: auto;
-    padding-block: 3rem;
+  [x-cloak] {
+    display: none !important;
   }
 
+  .container,
   .wp-container {
     width: min(100% - 2rem, var(--layout-content));
     margin-inline: auto;
   }
 
-  .wp-entry,
-  .wp-page,
-  .wp-single {
-    margin-block: 2rem;
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background-color: var(--c-surface-1);
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  .admin-bar .site-header {
+    top: 32px;
+  }
+
+  @media screen and (max-width: 782px) {
+    .admin-bar .site-header {
+      top: 46px;
+    }
+  }
+
+  .sobe-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.25rem;
+    font-weight: var(--font-semibold);
+    font-size: var(--text-sm);
+    line-height: 1;
+    text-decoration: none;
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .sobe-button--dark,
+  .sobe-button--light {
+    background-color: var(--c-primary);
+    color: var(--c-primary-fg);
+  }
+
+  .sobe-button--dark:hover,
+  .sobe-button--light:hover {
+    background-color: var(--c-primary-hover);
+  }
+
+  .sobe-button--outline-dark,
+  .sobe-button--outline-light {
+    border: 1px solid currentColor;
+    color: var(--c-heading);
+  }
+
+  .sobe-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--c-heading);
+    font-weight: var(--font-semibold);
+    text-decoration: none;
+  }
+
+  .sobe-link:hover {
+    color: var(--c-accent);
   }
 }

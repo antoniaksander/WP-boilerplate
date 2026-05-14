@@ -91,7 +91,7 @@ add_filter('allowed_block_types_all', function ($allowedBlocks) {
 
     $pfx = config('theme.prefix');
     foreach (\WP_Block_Type_Registry::get_instance()->get_all_registered() as $name => $block) {
-        if (str_starts_with($name, "{$pfx}/")) {
+        if (str_starts_with($name, 'sobe/') || str_starts_with($name, "{$pfx}/")) {
             $allowed[] = $name;
         }
     }
@@ -100,9 +100,10 @@ add_filter('allowed_block_types_all', function ($allowedBlocks) {
 });
 
 add_filter('block_categories_all', function ($categories) {
-    $pfx = config('theme.prefix');
-
     return array_merge([
-        ['slug' => "{$pfx}-general", 'title' => __('Sobe General', config('theme.textdomain')), 'icon' => 'layout'],
+        ['slug' => 'sobe-general', 'title' => __('Sobe General', config('theme.textdomain')), 'icon' => 'layout'],
+        ['slug' => 'sobe-woocommerce', 'title' => __('Sobe WooCommerce', config('theme.textdomain')), 'icon' => 'cart'],
+        ['slug' => 'sobe-content', 'title' => __('Sobe Content', config('theme.textdomain')), 'icon' => 'text'],
+        ['slug' => 'sobe-layout', 'title' => __('Sobe Layout', config('theme.textdomain')), 'icon' => 'layout'],
     ], $categories);
 });

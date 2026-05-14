@@ -1,0 +1,12 @@
+.wp-block-sobe-hero.hero--editorial,
+.wp-block-sobe-hero .hero__heading {
+  text-wrap: balance;
+}
+
+.wp-block-sobe-hero .hero__heading {
+  max-width: 11ch;
+}
+
+.wp-block-sobe-hero:has(.hero__heading) {
+  background: linear-gradient(135deg, var(--c-surface-invert), var(--c-surface-3));
+}

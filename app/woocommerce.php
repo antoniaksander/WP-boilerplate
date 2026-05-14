@@ -22,22 +22,34 @@ add_action('after_setup_theme', function (): void {
 }, 21);
 
 add_action('woocommerce_before_main_content', function (): void {
-    echo '<section class="wc-content-wrapper"><div class="wp-container">';
+    echo '<section class="wc-content-wrapper py-12 md:py-16"><div class="wp-container">';
 }, 10);
 
 add_action('woocommerce_after_main_content', function (): void {
     echo '</div></section>';
 }, 10);
 
+add_filter('loop_shop_columns', function (): int {
+    return (int) config('theme.wc_columns.desktop', 3);
+}, 20);
+
 add_action('wp_enqueue_scripts', function (): void {
-    if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) {
-        wp_enqueue_style(
-            config('theme.prefix').'-woocommerce',
-            \Roots\asset('resources/css/woocommerce.css')->uri(),
-            ['woocommerce-general', 'woocommerce-layout', 'woocommerce-smallscreen'],
-            null
-        );
+    $isWooContext = is_woocommerce()
+        || is_cart()
+        || is_checkout()
+        || is_account_page()
+        || has_block('sobe/product-carousel');
+
+    if (! $isWooContext) {
+        return;
     }
+
+    wp_enqueue_style(
+        config('theme.prefix').'-woocommerce',
+        \Roots\asset('resources/css/woocommerce.css')->uri(),
+        ['woocommerce-general', 'woocommerce-layout', 'woocommerce-smallscreen'],
+        null
+    );
 }, 100);
 
 add_action('wp_enqueue_scripts', function (): void {

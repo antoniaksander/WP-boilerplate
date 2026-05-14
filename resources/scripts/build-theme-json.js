@@ -92,9 +92,21 @@ function injectEditorSettings(themeJson) {
   themeJson.settings.color.custom = false;
   themeJson.settings.typography.fontSizes = editorFontSizes;
   themeJson.settings.typography.fontFamilies = editorFonts;
-  themeJson.settings.layout.contentSize =
-    extractToken('--layout-content') ?? '48rem';
-  themeJson.settings.layout.wideSize = extractToken('--layout-wide') ?? '80rem';
+  themeJson.settings.layout = {
+    ...(themeJson.settings.layout ?? {}),
+    contentSize: extractToken('--layout-content') ?? '72rem',
+    wideSize: extractToken('--layout-wide') ?? '90rem',
+  };
+  themeJson.settings.custom = {
+    ...(themeJson.settings.custom ?? {}),
+    layout: {
+      content: extractToken('--layout-content') ?? '72rem',
+      wide: extractToken('--layout-wide') ?? '90rem',
+      standard: extractToken('--layout-standard') ?? '90rem',
+      grid: extractToken('--layout-grid') ?? '96rem',
+      reading: extractToken('--layout-reading') ?? '60rem',
+    },
+  };
 
   return themeJson;
 }
