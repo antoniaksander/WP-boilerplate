@@ -1,6 +1,12 @@
 # v2 Platform Migration Plan
 
-Status: Pass 2 checkpoint. Do not begin Pass 3 migration planning until this classification is reviewed.
+Status: audit artifact for the v2 platform migration.
+
+Implementation overrides applied after this plan was written:
+
+- Brand font files are retained as platform defaults.
+- The `reviews-slider` / `testimonial-slider` split is deferred; `sobe/reviews-slider` ships with auto, products, and manual modes.
+- Phase implementation is tracked by commits on `feat/v2-platform-audit`; current docs reflect the shipped implementation over older plan notes below.
 
 Reference tags created before audit:
 
