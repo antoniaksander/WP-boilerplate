@@ -13,6 +13,7 @@
 ### Fixed
 
 - Fixed layout shell rendering so changing the client `prefix` no longer renames the default `sobe/site-header` and `sobe/site-footer` blocks.
+- Added header navigation fallback output for fresh installs without an assigned primary menu.
 
 ## v2.0.2 - 2026-05-17
 

@@ -48,6 +48,16 @@ add_filter('sobe/layout/block_name', function (string $blockName, string $type):
 }, 10, 2);
 ```
 
+## Navigation
+
+| Hook | Type | Parameters | Return |
+|------|------|------------|--------|
+| `sobe/navigation/fallback_html` | filter | `string $html, array $args` | Header navigation fallback HTML |
+
+The header renders the assigned `primary_navigation` menu when present. If no
+menu is assigned, it falls back to a page list, or a Home link when there are no
+pages.
+
 ## Hero
 
 | Hook | Type | Parameters | Return |

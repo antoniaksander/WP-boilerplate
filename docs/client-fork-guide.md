@@ -13,7 +13,8 @@ over editing platform-owned behavior in place.
 2. Add the public boilerplate remote as `upstream`.
 3. Create the client theme folder name. The folder name matters because built
    asset URLs include it.
-4. Update the theme identity checklist below.
+4. Update the theme identity checklist below before configuring the site in the
+   WordPress admin.
 5. Install dependencies and run validation.
 
 ```bash
@@ -37,6 +38,11 @@ Update these files before the first client build:
 | `package.json` | Change `name`. | `package-lock.json` will update its `name` fields the next time `npm install` writes the lockfile. |
 | `README.md` | Replace the platform README with a client-specific README. | Keep a short note that the client repo tracks the Sobe platform upstream if that helps future maintainers. |
 | `vite.config.js` | Change `base` to the real theme folder path, for example `/wp-content/themes/roxder/public/build/`. | If this path does not match the actual theme folder, built CSS, JS, and block asset URLs will break. |
+
+Change `config/theme.php` `prefix` before using the Customizer. Customizer
+settings are stored in the database under keys that include the prefix, so
+changing the prefix after configuring logos, header options, footer options, or
+WooCommerce display options leaves those settings orphaned under the old keys.
 
 ## What Changes And What Stays
 
@@ -91,9 +97,9 @@ wants to replace the platform shell. In that case, use the
 4. Assign it to `Primary Navigation`.
 5. Save the menu.
 
-The header views check `has_nav_menu('primary_navigation')`. If no menu is
-assigned to that location, the header can still render, but the navigation area
-will be empty.
+If no menu is assigned to that location yet, the header falls back to a page
+list, or a Home link when the site has no pages. Assigning a real menu replaces
+that fallback.
 
 ### 3. Configure Header, Logo, And Footer
 
