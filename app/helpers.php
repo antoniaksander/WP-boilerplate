@@ -51,3 +51,38 @@ function sobe_navigation_menu(array $args = []): string
 
     return (string) apply_filters('sobe/navigation/fallback_html', $html, $args);
 }
+
+function sobe_footer_fallback_links(): array
+{
+    $links = [
+        [
+            'label' => __('Home', 'sobe'),
+            'url' => home_url('/'),
+        ],
+    ];
+
+    foreach ([
+        'about' => __('About', 'sobe'),
+        'contact' => __('Contact', 'sobe'),
+    ] as $slug => $label) {
+        $page = get_page_by_path($slug);
+        if ($page instanceof \WP_Post) {
+            $links[] = [
+                'label' => $label,
+                'url' => get_permalink($page),
+            ];
+        }
+    }
+
+    if (function_exists('wc_get_page_id')) {
+        $shopPageId = (int) wc_get_page_id('shop');
+        if ($shopPageId > 0) {
+            $links[] = [
+                'label' => __('Shop', 'sobe'),
+                'url' => get_permalink($shopPageId),
+            ];
+        }
+    }
+
+    return (array) apply_filters('sobe/footer/fallback_links', $links);
+}

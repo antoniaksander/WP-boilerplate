@@ -128,9 +128,12 @@ In `Footer Options`:
 - `layout-2` renders the minimal brand and widget footer.
 - `none` hides the footer.
 
-Footer content comes from the `Footer` widget area. Go to `Appearance ->
-Widgets`, add blocks or widgets to `Footer`, and save. The default footer also
-uses the site name, tagline, and current year.
+Footer content can come from the `Footer Navigation` menu location or the
+`Footer` widget area. With neither configured, the theme renders a small fallback
+link group so a fresh install still has a useful footer. Go to `Appearance ->
+Menus` to assign footer navigation, or `Appearance -> Widgets` to add blocks or
+widgets to `Footer`. The default footer also uses the site name, tagline, and
+current year.
 
 ### 4. Set A Homepage
 

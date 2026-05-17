@@ -58,6 +58,15 @@ The header renders the assigned `primary_navigation` menu when present. If no
 menu is assigned, it falls back to a page list, or a Home link when there are no
 pages.
 
+## Footer
+
+| Hook | Type | Parameters | Return |
+|------|------|------------|--------|
+| `sobe/footer/fallback_links` | filter | `array $links` | Footer fallback links |
+
+Fallback links render only when no `Footer Navigation` menu is assigned and the
+`Footer` widget area is empty. Each link item should include `label` and `url`.
+
 ## Hero
 
 | Hook | Type | Parameters | Return |
