@@ -167,9 +167,16 @@ work on dark backgrounds.
 
 ## Brand Tokens
 
-Override brand values in `resources/css/tokens.css`.
+Keep `resources/css/tokens.css` as the upstream token contract. In client forks,
+put brand overrides in `resources/css/client-tokens.css`; `package.json`
+configures that path through `wpBoilerplate.themeJsonTokenOverrides`.
 
-Keep token names stable. Client changes should set values, not rename the
+The file is optional. When it exists, `npm run build` reads platform tokens
+first, then the client override file, so later client values flow into the
+generated editor `theme.json` automatically. No platform build-script patch is
+needed.
+
+Keep token names stable. Client changes should set values, not rename the token
 contract. Typical client-owned tokens include:
 
 - `--c-primary`
@@ -180,7 +187,10 @@ contract. Typical client-owned tokens include:
 - logo-dependent spacing or header sizing
 
 The bundled Satoshi and CabinetGrotesk fonts are platform defaults. A client
-may keep them or replace the font token values and add its own font files.
+may keep them or replace the font token values and add its own font files. The
+editor font families can be overridden with `--font-sans`, `--font-serif`,
+`--font-mono`, or explicit `--editor-font-*` tokens in the client override
+file.
 
 ## Blocks
 
@@ -201,10 +211,11 @@ without mutating upstream blocks in place.
    - `title`
    - `description`
    - `category`, if the block should appear in a client category
-4. Keep `textdomain` as `sobe` in v2.0.x.
+4. Keep `textdomain` as `sobe`.
 5. Update imports, labels, CSS class names, and editor preview text only where
    they are actually client-owned.
-6. Add the copied folder slug to `resources/blocks/blocks-manifest.json`.
+6. Add the copied folder slug to `resources/blocks/blocks-manifest.json`, using
+   `name` for the full client block name.
 7. Run `npm test`, `npm run check:patterns`, and `npm run build`.
 
 Do not leave copied metadata as `sobe/example`, `sobe/hero`, or another platform
@@ -239,15 +250,15 @@ Example category shape:
 ### Blocks Manifest
 
 `resources/blocks/blocks-manifest.json` is the source list for block folders.
-The v2.0.x runtime and Vite entries iterate over the manifest keys, so the key
-must match the folder slug under `resources/blocks`.
+The runtime and Vite entries iterate over the manifest keys, so the key must
+match the folder slug under `resources/blocks`.
 
-Current entry fields:
+Entry fields:
 
 | Field | Required | Notes |
 | --- | --- | --- |
 | `category` | Yes | Must match `block.json` `category`. The platform tests assert this. |
-| `name` | Required for client-namespace blocks by convention | Use the full block name, for example `roxder/hero`. The v2.0.x runtime still reads the registered name from `block.json`, but adding `name` makes client intent explicit and gives client-adjusted tests a stable source of truth. v2.1.0 should formalize this so clients do not need custom test adjustments. |
+| `name` | No | Full block name for tooling and tests. Defaults to `sobe/<slug>` when omitted. Add it for client-namespace blocks, for example `roxder/hero`. The runtime still reads the registered block name from `block.json`, so keep both values in sync when `name` is present. |
 
 Example client block entry:
 
@@ -262,13 +273,9 @@ Example client block entry:
 
 ### Block Tests
 
-The platform block metadata test in `tests/blocks/meta.test.cjs` currently
-expects every manifest key to register as `sobe/<slug>`. Client forks that add
-`roxder/*` blocks may need to adjust that test to read `manifest[slug].name`
-when present and fall back to `sobe/<slug>` for platform blocks.
-
-That test adjustment belongs in the client fork for v2.0.x. v2.1.0 should make
-client-namespace blocks work without a local test patch.
+The platform block metadata test reads `manifest[slug].name` when present and
+falls back to `sobe/<slug>` for platform blocks. Client forks should not need to
+patch the platform test when adding a client-namespace block.
 
 ## WooCommerce Customization
 

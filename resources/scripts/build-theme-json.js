@@ -6,25 +6,91 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '../..');
 const themeJsonPath = path.join(rootDir, 'public/build/assets/theme.json');
 const tokensPath = path.join(rootDir, 'resources/css/tokens.css');
+const packageJsonPath = path.join(rootDir, 'package.json');
 
-// Extract raw hex values directly from tokens.css
-const tokensCss = fs.readFileSync(tokensPath, 'utf8');
-const rootBlockMatch = tokensCss.match(/:root\s*{([^}]*)}/gs);
-const rootBlock = rootBlockMatch ? rootBlockMatch.join('\n') : tokensCss;
+function readPackageConfig() {
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  return packageJson.wpBoilerplate ?? {};
+}
+
+function normalizeOverridePaths(value) {
+  if (!value) return [];
+  if (typeof value === 'string') return [value];
+  if (Array.isArray(value)) return value.filter((item) => typeof item === 'string');
+  return [];
+}
+
+function resolveTokenSources() {
+  const config = readPackageConfig();
+  const overridePaths = normalizeOverridePaths(config.themeJsonTokenOverrides);
+  const sources = [{ label: 'platform tokens', path: tokensPath, isOverride: false }];
+
+  for (const overridePath of overridePaths) {
+    const resolvedPath = path.isAbsolute(overridePath)
+      ? overridePath
+      : path.join(rootDir, overridePath);
+
+    if (fs.existsSync(resolvedPath)) {
+      sources.push({
+        label: overridePath,
+        path: resolvedPath,
+        isOverride: true,
+      });
+    }
+  }
+
+  return sources;
+}
+
+function parseRootTokens(css) {
+  const tokens = new Map();
+  const rootBlockMatches = [...css.matchAll(/:root\s*{([^}]*)}/gs)];
+  const rootBlocks = rootBlockMatches.length > 0 ? rootBlockMatches.map((match) => match[1]) : [css];
+
+  for (const rootBlock of rootBlocks) {
+    const declarationMatches = rootBlock.matchAll(/(--[a-zA-Z0-9_-]+)\s*:\s*([^;]+);/g);
+
+    for (const match of declarationMatches) {
+      tokens.set(match[1], match[2].trim());
+    }
+  }
+
+  return tokens;
+}
+
+function readTokenSource(source) {
+  return {
+    ...source,
+    tokens: parseRootTokens(fs.readFileSync(source.path, 'utf8')),
+  };
+}
+
+function mergeTokenSources(sources) {
+  const merged = new Map();
+
+  for (const source of sources) {
+    for (const [token, value] of source.tokens.entries()) {
+      merged.set(token, value);
+    }
+  }
+
+  return merged;
+}
+
+const tokenSources = resolveTokenSources().map(readTokenSource);
+const tokens = mergeTokenSources(tokenSources);
+const overrideTokens = mergeTokenSources(tokenSources.filter((source) => source.isOverride));
 
 const extractColor = (token) => {
-  const regex = new RegExp(
-    `${token}:\\s*(#[0-9a-fA-F]{3,8}|rgba?\\([^)]+\\));`,
-  );
-  const match = rootBlock.match(regex);
-  return match ? match[1] : null;
+  const value = tokens.get(token);
+  return value && /^(#[0-9a-fA-F]{3,8}|rgba?\([^)]+\))$/.test(value) ? value : null;
 };
 
 const extractToken = (token) => {
-  const regex = new RegExp(`${token}:\\s*([^;]+);`);
-  const match = rootBlock.match(regex);
-  return match ? match[1].trim() : null;
+  return tokens.get(token) ?? null;
 };
+
+const extractOverrideToken = (token) => overrideTokens.get(token) ?? null;
 
 // Curated editor palette mapping
 const paletteMapping = [
@@ -64,22 +130,36 @@ const editorFontSizes = [
   { name: '7XL', slug: '7xl', size: 'var(--font-size-7xl)' },
 ];
 
+const editorFontDefaults = {
+  sans: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  serif: 'ui-serif, Georgia, Cambria, "Times New Roman", serif',
+  mono: 'ui-monospace, "Cascadia Code", "Fira Code", Consolas, monospace',
+};
+
 const editorFonts = [
   {
     name: 'Sans',
     slug: 'sans',
-    fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    fontFamily:
+      extractOverrideToken('--editor-font-sans') ??
+      extractOverrideToken('--font-sans') ??
+      editorFontDefaults.sans,
   },
   {
     name: 'Serif',
     slug: 'serif',
-    fontFamily: 'ui-serif, Georgia, Cambria, "Times New Roman", serif',
+    fontFamily:
+      extractOverrideToken('--editor-font-serif') ??
+      extractOverrideToken('--font-serif') ??
+      editorFontDefaults.serif,
   },
   {
     name: 'Mono',
     slug: 'mono',
     fontFamily:
-      'ui-monospace, "Cascadia Code", "Fira Code", Consolas, monospace',
+      extractOverrideToken('--editor-font-mono') ??
+      extractOverrideToken('--font-mono') ??
+      editorFontDefaults.mono,
   },
 ];
 
@@ -119,7 +199,8 @@ try {
   fs.writeFileSync(themeJsonPath, JSON.stringify(merged, null, 2) + '\n');
 
   console.log(`Injected editor settings into theme.json`);
-  console.log(`   Colors: ${editorPalette.length} (Extracted from tokens.css)`);
+  console.log(`   Token sources: ${tokenSources.length}`);
+  console.log(`   Colors: ${editorPalette.length}`);
   console.log(`   Font sizes: ${editorFontSizes.length}`);
   console.log(`   Font families: ${editorFonts.length}`);
 } catch (err) {
