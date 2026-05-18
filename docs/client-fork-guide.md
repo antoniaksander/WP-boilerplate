@@ -172,15 +172,20 @@ infrastructure and must stay aligned with upstream. Editing it creates merge
 conflicts on every platform update and can produce duplicate-token cascade bugs
 that are hard to spot visually.
 
-Put brand overrides in `resources/css/client-tokens.css` instead. `package.json`
-configures that path through `wpBoilerplate.themeJsonTokenOverrides`, and the
-client override file is loaded after `tokens.css` so client values win the
-cascade.
+Put brand overrides in the shipped starter file at
+`resources/css/client-tokens.css` instead. It is loaded after `tokens.css` so
+client values win the cascade, and `package.json` configures the same path
+through `wpBoilerplate.themeJsonTokenOverrides` for the editor `theme.json`
+build.
 
-The client override file is optional. When it exists, `npm run build` reads
-platform tokens first, then the client override file, so later client values
-flow into the generated editor `theme.json` automatically. No platform
-build-script patch is needed.
+The starter file is intentionally inert until a client uncomments and changes
+values. For the complete list of overridable tokens and their platform
+defaults, read `docs/token-reference.md`.
+
+When `npm run build` runs, it reads platform tokens first, then
+`client-tokens.css`, so later client values flow into the generated editor
+`theme.json` automatically for existing editor-mapped tokens. No platform
+build-script patch is needed when overriding an existing token.
 
 Keep token names stable. Client changes should set values, not rename the token
 contract. Typical client-owned tokens include:
@@ -197,6 +202,14 @@ may keep them or replace the font token values and add its own font files. The
 editor font families can be overridden with `--font-sans`, `--font-serif`,
 `--font-mono`, or explicit `--editor-font-*` tokens in the client override
 file.
+
+New CSS custom properties added in `client-tokens.css` work immediately in
+client CSS and client block stylesheets, but they do not automatically appear
+in the editor palette or font controls. The editor palette is built from the
+curated `paletteMapping` list in `resources/scripts/build-theme-json.js`. If a
+client fork needs a genuinely new token in the editor palette, add that token
+to the mapping in the client fork. This is a client-side change, not a platform
+change.
 
 ## Blocks
 

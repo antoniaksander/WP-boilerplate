@@ -14,6 +14,22 @@
 
 - None yet.
 
+## v2.2.1 - 2026-05-18
+
+### Added
+
+- Added an inert `resources/css/client-tokens.css` starter template for client
+  brand overrides.
+- Added `docs/token-reference.md` with the overridable token contract and
+  editor palette guidance for genuinely new client tokens.
+
+### Fixed
+
+- Limited WooCommerce product-card image hover effects to devices that support
+  hover.
+- Added site-title text fallbacks for missing header logo variants so empty
+  logo URLs do not render broken images.
+
 ## v2.2.0 - 2026-05-18
 
 ### Changed

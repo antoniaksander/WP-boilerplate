@@ -1,0 +1,56 @@
+/* ==========================================================================
+   Client brand overrides.
+
+   Tokens defined here override the platform defaults in tokens.css. This file
+   is loaded after tokens.css so values here win the cascade.
+
+   Leave unused examples commented out. For the complete token list and editor
+   palette notes, see docs/token-reference.md.
+
+   Fonts: if adding a new font, register the @font-face in app/setup-patterns.php
+   and place the font file in fonts/.
+   ========================================================================== */
+
+/*
+:root {
+  --font-sans: 'ClientSans', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'ClientHeading', var(--font-sans);
+  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+
+  --c-primary: #111827;
+  --c-primary-fg: #ffffff;
+  --c-primary-hover: color-mix(in oklch, var(--c-primary) 82%, white);
+
+  --c-accent: #4b5563;
+  --c-accent-fg: #ffffff;
+  --c-accent-hover: color-mix(in oklch, var(--c-accent) 82%, black);
+
+  --c-background: #ffffff;
+  --c-surface-1: #ffffff;
+  --c-text: #111827;
+  --c-heading: #030712;
+  --c-border: #e5e7eb;
+}
+*/
+
+/*
+.dark {
+  --font-sans: 'ClientSans', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'ClientHeading', var(--font-sans);
+  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+
+  --c-primary: #f8fafc;
+  --c-primary-fg: #111827;
+  --c-primary-hover: color-mix(in oklch, var(--c-primary) 92%, black);
+
+  --c-accent: #cbd5e1;
+  --c-accent-fg: #111827;
+  --c-accent-hover: color-mix(in oklch, var(--c-accent) 82%, white);
+
+  --c-background: #0f172a;
+  --c-surface-1: #111827;
+  --c-text: #e5e7eb;
+  --c-heading: #f8fafc;
+  --c-border: #334155;
+}
+*/

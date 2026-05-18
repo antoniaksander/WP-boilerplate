@@ -1,4 +1,5 @@
 @import './tokens.css';
+@import './client-tokens.css';
 @import 'swiper/css/bundle';
 @import 'nouislider/dist/nouislider.css';
 
@@ -118,9 +119,11 @@
   }
 }
 
-.woocommerce ul.products li.product:hover {
-  box-shadow: none;
-  transform: none;
+@media (hover: hover) {
+  .woocommerce ul.products li.product:hover {
+    box-shadow: none;
+    transform: none;
+  }
 }
 
 .woocommerce ul.products li.product a img {
@@ -132,8 +135,10 @@
   transition: transform 300ms ease;
 }
 
-.woocommerce ul.products li.product:hover a img {
-  transform: scale(1.04);
+@media (hover: hover) {
+  .woocommerce ul.products li.product:hover a img {
+    transform: scale(1.04);
+  }
 }
 
 /* ── Shop pagination ───────────────────────────────────────────────────── */
@@ -976,8 +981,10 @@
   transition: opacity 300ms ease;
 }
 
-.woocommerce ul.products li.product:hover a .sobe-product-image-wrapper img {
-  transform: none;
+@media (hover: hover) {
+  .woocommerce ul.products li.product:hover a .sobe-product-image-wrapper img {
+    transform: none;
+  }
 }
 
 .sobe-secondary-image {
@@ -990,8 +997,10 @@
   transition: opacity 300ms ease;
 }
 
-.woocommerce ul.products li.product:hover .sobe-secondary-image {
-  opacity: 1;
+@media (hover: hover) {
+  .woocommerce ul.products li.product:hover .sobe-secondary-image {
+    opacity: 1;
+  }
 }
 
 /* ── Wishlist heart button ── */
