@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './tokens.css';
+@import './client-tokens.css';
 
 @source "../../app/**/*.php";
 @source "../**/*.blade.php";

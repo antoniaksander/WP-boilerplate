@@ -1,16 +1,24 @@
+@php
+  $hasLogo = is_string($logo ?? null) && trim($logo) !== '';
+  $hasDarkLogo = is_string($darkLogo ?? null) && trim($darkLogo) !== '';
+  $logoTextClass = 'inline-block max-w-[160px] truncate font-heading text-lg font-semibold leading-none text-heading';
+@endphp
+
 <header class="site-header sticky top-0 z-40 bg-surface-1/95 backdrop-blur-sm border-b border-border transition-colors duration-300">
   <div class="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
 
     <a class="font-semibold text-lg shrink-0 text-heading" href="{{ home_url('/') }}">
-      @if ($logo)
+      @if ($hasLogo)
         <img
           class="!h-8 w-auto max-w-[140px] xs:max-w-[160px] object-contain"
           src="{{ $logo }}"
           alt="{{ $siteName }}"
           x-show="!dark"
         />
+      @else
+        <span class="{{ $logoTextClass }}" x-show="!dark">{{ $siteName }}</span>
       @endif
-      @if ($darkLogo)
+      @if ($hasDarkLogo)
         <img
           class="!h-8 w-auto max-w-[140px] xs:max-w-[160px] object-contain"
           src="{{ $darkLogo }}"
@@ -18,9 +26,8 @@
           x-show="dark"
           x-cloak
         />
-      @endif
-      @if (!$logo && !$darkLogo)
-        {!! $siteName !!}
+      @else
+        <span class="{{ $logoTextClass }}" x-show="dark" x-cloak>{{ $siteName }}</span>
       @endif
     </a>
 

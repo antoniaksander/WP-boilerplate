@@ -44,8 +44,10 @@ function resolveTokenSources() {
 
 function parseRootTokens(css) {
   const tokens = new Map();
-  const rootBlockMatches = [...css.matchAll(/:root\s*{([^}]*)}/gs)];
-  const rootBlocks = rootBlockMatches.length > 0 ? rootBlockMatches.map((match) => match[1]) : [css];
+  const uncommentedCss = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const rootBlockMatches = [...uncommentedCss.matchAll(/:root\s*{([^}]*)}/gs)];
+  const rootBlocks =
+    rootBlockMatches.length > 0 ? rootBlockMatches.map((match) => match[1]) : [uncommentedCss];
 
   for (const rootBlock of rootBlocks) {
     const declarationMatches = rootBlock.matchAll(/(--[a-zA-Z0-9_-]+)\s*:\s*([^;]+);/g);

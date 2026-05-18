@@ -1,4 +1,10 @@
 {{-- Header 2 — Centered: Menu Left | Logo Center | Cart Right --}}
+@php
+  $hasLogo = is_string($logo ?? null) && trim($logo) !== '';
+  $hasDarkLogo = is_string($darkLogo ?? null) && trim($darkLogo) !== '';
+  $logoTextClass = 'inline-block max-w-[160px] truncate font-heading text-lg font-semibold leading-none text-heading';
+@endphp
+
 <header class="site-header">
   <div class="max-w-standard mx-auto px-lg lg:px-xl h-16 flex items-center justify-between relative">
 
@@ -33,15 +39,17 @@
       class="absolute left-1/2 -translate-x-1/2 font-semibold text-lg text-heading"
       href="{{ home_url('/') }}"
     >
-      @if ($logo)
+      @if ($hasLogo)
         <img
           class="!h-8 w-auto max-w-[160px] object-contain"
           src="{{ $logo }}"
           alt="{{ $siteName }}"
           x-show="!dark"
         />
+      @else
+        <span class="{{ $logoTextClass }}" x-show="!dark">{{ $siteName }}</span>
       @endif
-      @if ($darkLogo)
+      @if ($hasDarkLogo)
         <img
           class="!h-8 w-auto max-w-[160px] object-contain"
           src="{{ $darkLogo }}"
@@ -49,9 +57,8 @@
           x-show="dark"
           x-cloak
         />
-      @endif
-      @if (!$logo && !$darkLogo)
-        {{ $siteName }}
+      @else
+        <span class="{{ $logoTextClass }}" x-show="dark" x-cloak>{{ $siteName }}</span>
       @endif
     </a>
 
