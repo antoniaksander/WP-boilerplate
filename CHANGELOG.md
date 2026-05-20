@@ -14,6 +14,29 @@
 
 - None yet.
 
+## v2.3.0 - 2026-05-21
+
+### Added
+
+- Added conditional WooCommerce stylesheet enqueueing for shortcode and curated
+  WooCommerce block contexts while preserving the existing archive, cart,
+  checkout, account, and `sobe/product-carousel` conditions.
+- Allowed native WooCommerce block availability in the editor, including 171
+  WooCommerce blocks, `woocommerce/product-search`, and 12 required core block
+  dependencies for Product Collection and related blocks.
+
+### Fixed
+
+- Added shortcode pagination support by reading WooCommerce loop props and
+  using WooCommerce's `product-page` query argument for paginated shortcode
+  loops.
+
+### Notes
+
+- Native WooCommerce block styling is not included in v2.3.0. Client styling
+  for native WooCommerce blocks belongs in the client repo.
+- Tested with WordPress 7.0.
+
 ## v2.2.1 - 2026-05-18
 
 ### Added
