@@ -331,6 +331,40 @@ trigger, drawer, focus, and desktop-container references scoped to the instance,
 but multiple catalog-filter blocks on one page are not a supported production
 feature.
 
+## WooCommerce Render Paths
+
+Classic WooCommerce loops flow through WooCommerce's template part loader:
+`wc_get_template_part('content', 'product')`. That includes shop archives,
+product category archives, product shortcodes such as `[products]` and
+`[product_category]`, related products, up-sells, and similar classic product
+loop surfaces. The theme overrides that template through
+`resources/views/woocommerce/content-product.blade.php`, so these paths use the
+theme product card and the theme WooCommerce stylesheet.
+
+Product shortcodes on normal pages are part of that classic render path.
+Shortcodes such as `[products]`, `[product_category]`, `[featured_products]`,
+`[sale_products]`, `[best_selling_products]`, `[recent_products]`,
+`[top_rated_products]`, `[product]`, and `[product_page]` now enqueue the theme
+WooCommerce stylesheet when present in page content. Paginated product
+shortcodes such as `[products paginate="true"]` also emit the theme pagination
+view by reading WooCommerce loop props and using WooCommerce's `product-page`
+query argument. These shortcode render-path fixes were added in v2.3.0.
+
+Native WooCommerce blocks are a separate surface. Product Collection, Featured
+Product, Product Categories, Product Search, Cart, Checkout, Mini-cart,
+block-based product detail pages, Reviews, and related WooCommerce blocks are
+available in the editor inserter, but the platform does not style them. They
+render with WooCommerce's default styling. Bringing native WooCommerce blocks
+into a client's visual system belongs in the client repo, where client-specific
+presentation choices can be made without constraining other forks.
+
+WP default blocks follow the same ownership model. Beyond basic typography and
+layout, client-specific default block styling belongs in the client repo.
+
+This boundary keeps the platform light, keeps upstream syncs clean for client
+forks, and lets each client own its WooCommerce presentation without merge
+conflicts on platform updates.
+
 ## Search
 
 The platform provides `/wp-json/sobe/v1/search` and a search overlay. Clients
