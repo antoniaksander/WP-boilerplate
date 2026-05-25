@@ -15,11 +15,13 @@ add_action('init', function (): void {
         ? json_decode(file_get_contents($manifestPath), true)
         : [];
 
-    foreach (array_keys($manifest ?: []) as $blockSlug) {
-        $assetUri = \Roots\asset("resources/blocks/{$blockSlug}/index.jsx")->uri();
+    foreach (array_keys($manifest ?: []) as $blockPath) {
+        $blockHandle = str_replace('/', '-', $blockPath);
+        $assetUri = \Roots\asset("resources/blocks/{$blockPath}/index.jsx")->uri();
+        $viewName = 'blocks.'.str_replace('/', '.', $blockPath);
 
         wp_register_script(
-            "{$pfx}-{$blockSlug}",
+            "{$pfx}-{$blockHandle}",
             $assetUri,
             ['wp-blocks', 'wp-element', 'wp-components', 'wp-i18n', 'wp-block-editor'],
             null,
@@ -27,47 +29,47 @@ add_action('init', function (): void {
         );
 
         $blockArgs = [
-            'editor_script' => "{$pfx}-{$blockSlug}",
-            'render_callback' => function ($attributes, $content = '') use ($blockSlug) {
-                return view("blocks.{$blockSlug}", compact('attributes', 'content'))->render();
+            'editor_script' => "{$pfx}-{$blockHandle}",
+            'render_callback' => function ($attributes, $content = '') use ($viewName) {
+                return view($viewName, compact('attributes', 'content'))->render();
             },
         ];
 
-        $stylePath = resource_path("blocks/{$blockSlug}/style.scss");
+        $stylePath = resource_path("blocks/{$blockPath}/style.scss");
         if (file_exists($stylePath)) {
             wp_register_style(
-                "{$pfx}-{$blockSlug}-style",
-                \Roots\asset("resources/blocks/{$blockSlug}/style.scss")->uri(),
+                "{$pfx}-{$blockHandle}-style",
+                \Roots\asset("resources/blocks/{$blockPath}/style.scss")->uri(),
                 [],
                 null
             );
-            $blockArgs['style'] = "{$pfx}-{$blockSlug}-style";
+            $blockArgs['style'] = "{$pfx}-{$blockHandle}-style";
         }
 
-        $editorStylePath = resource_path("blocks/{$blockSlug}/editor.scss");
+        $editorStylePath = resource_path("blocks/{$blockPath}/editor.scss");
         if (file_exists($editorStylePath)) {
             wp_register_style(
-                "{$pfx}-{$blockSlug}-editor-style",
-                \Roots\asset("resources/blocks/{$blockSlug}/editor.scss")->uri(),
+                "{$pfx}-{$blockHandle}-editor-style",
+                \Roots\asset("resources/blocks/{$blockPath}/editor.scss")->uri(),
                 [],
                 null
             );
-            $blockArgs['editor_style'] = "{$pfx}-{$blockSlug}-editor-style";
+            $blockArgs['editor_style'] = "{$pfx}-{$blockHandle}-editor-style";
         }
 
-        $viewPath = resource_path("blocks/{$blockSlug}/view.js");
+        $viewPath = resource_path("blocks/{$blockPath}/view.js");
         if (file_exists($viewPath)) {
             wp_register_script(
-                "{$pfx}-{$blockSlug}-view",
-                \Roots\asset("resources/blocks/{$blockSlug}/view.js")->uri(),
+                "{$pfx}-{$blockHandle}-view",
+                \Roots\asset("resources/blocks/{$blockPath}/view.js")->uri(),
                 [],
                 null,
                 true
             );
-            $blockArgs['view_script'] = "{$pfx}-{$blockSlug}-view";
+            $blockArgs['view_script'] = "{$pfx}-{$blockHandle}-view";
         }
 
-        register_block_type(resource_path("blocks/{$blockSlug}"), $blockArgs);
+        register_block_type(resource_path("blocks/{$blockPath}"), $blockArgs);
     }
 });
 

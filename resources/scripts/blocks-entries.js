@@ -12,8 +12,8 @@ export function getBlockEntries() {
     readFileSync(resolve('./resources/blocks/blocks-manifest.json'), 'utf8'),
   );
 
-  return Object.keys(manifest).flatMap((slug) => {
-    const base = `resources/blocks/${slug}`;
+  return Object.keys(manifest).flatMap((blockPath) => {
+    const base = `resources/blocks/${blockPath}`;
     return [
       `${base}/index.jsx`,
       `${base}/style.scss`,

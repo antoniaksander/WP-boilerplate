@@ -79,7 +79,7 @@ parts. Header and footer output comes from the Sage layout:
   `resources/patterns/`, but those patterns are examples and are not inserted
   through the Site Editor.
 - The platform ships hidden layout block examples in
-  `resources/blocks/site-header` and `resources/blocks/site-footer`.
+  `resources/blocks/sobe/site-header` and `resources/blocks/sobe/site-footer`.
 
 Changing `config/theme.php` `prefix` must not rename the layout shell. The shell
 block namespace is platform infrastructure, like the `sobe/*` hook namespace and
@@ -221,10 +221,10 @@ namespace.
 Copying a platform block is the safest way to create client-specific behavior
 without mutating upstream blocks in place.
 
-1. Copy the block folder, for example `resources/blocks/hero` to
-   `resources/blocks/roxder-hero`.
-2. Copy the matching Blade view, for example `resources/views/blocks/hero.blade.php`
-   to `resources/views/blocks/roxder-hero.blade.php`.
+1. Copy the block folder, for example `resources/blocks/sobe/hero` to
+   `resources/blocks/roxder/hero`.
+2. Copy the matching Blade view, for example `resources/views/blocks/sobe/hero.blade.php`
+   to `resources/views/blocks/roxder/hero.blade.php`.
 3. In the copied `block.json`, update every identity field:
    - `name`, for example `roxder/hero`
    - `title`
@@ -233,8 +233,7 @@ without mutating upstream blocks in place.
 4. Keep `textdomain` as `sobe`.
 5. Update imports, labels, CSS class names, and editor preview text only where
    they are actually client-owned.
-6. Add the copied folder slug to `resources/blocks/blocks-manifest.json`, using
-   `name` for the full client block name.
+6. Add the copied path key to `resources/blocks/blocks-manifest.json`.
 7. Run `npm test`, `npm run check:patterns`, and `npm run build`.
 
 Do not leave copied metadata as `sobe/example`, `sobe/hero`, or another platform
@@ -270,21 +269,20 @@ Example category shape:
 
 `resources/blocks/blocks-manifest.json` is the source list for block folders.
 The runtime and Vite entries iterate over the manifest keys, so the key must
-match the folder slug under `resources/blocks`.
+match the namespace-qualified folder path under `resources/blocks`.
 
 Entry fields:
 
 | Field | Required | Notes |
 | --- | --- | --- |
 | `category` | Yes | Must match `block.json` `category`. The platform tests assert this. |
-| `name` | No | Full block name for tooling and tests. Defaults to `sobe/<slug>` when omitted. Add it for client-namespace blocks, for example `roxder/hero`. The runtime still reads the registered block name from `block.json`, so keep both values in sync when `name` is present. |
+| `name` | No | Full block name for tooling and tests. Defaults to the path key when omitted. The runtime still reads the registered block name from `block.json`, so keep both values in sync when `name` is present. |
 
 Example client block entry:
 
 ```json
 {
-  "roxder-hero": {
-    "name": "roxder/hero",
+  "roxder/hero": {
     "category": "roxder"
   }
 }
@@ -292,9 +290,9 @@ Example client block entry:
 
 ### Block Tests
 
-The platform block metadata test reads `manifest[slug].name` when present and
-falls back to `sobe/<slug>` for platform blocks. Client forks should not need to
-patch the platform test when adding a client-namespace block.
+The platform block metadata test reads `manifest[path].name` when present and
+falls back to the path key. Client forks should not need to patch the platform
+test when adding a client-namespace block.
 
 ## WooCommerce Customization
 

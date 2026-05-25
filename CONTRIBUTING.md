@@ -31,22 +31,26 @@ shasum -a 256 resources/css/tokens.css > tests/fixtures/tokens-css.sha256
 
 Blocks are dynamic Gutenberg blocks:
 
-- Editor UI: `resources/blocks/{slug}/edit.jsx`
-- Metadata: `resources/blocks/{slug}/block.json`
-- Frontend output: `resources/views/blocks/{slug}.blade.php`
-- Runtime script when needed: `resources/blocks/{slug}/view.js`
+- Editor UI: `resources/blocks/{namespace}/{slug}/edit.jsx`
+- Metadata: `resources/blocks/{namespace}/{slug}/block.json`
+- Frontend output: `resources/views/blocks/{namespace}/{slug}.blade.php`
+- Runtime script when needed: `resources/blocks/{namespace}/{slug}/view.js`
 - `save.jsx` returns `null`
 - Registration is driven by `resources/blocks/blocks-manifest.json`
 
-Manifest entries are keyed by the block folder slug. Each entry supports:
+Manifest entries are keyed by the block path relative to `resources/blocks/`.
+Each entry supports:
 
 | Field | Required | Notes |
 | --- | --- | --- |
 | `category` | Yes | Must match the block's `block.json` category. |
-| `name` | No | Full block name for tooling and tests. Defaults to `sobe/<slug>` when omitted. Add it for client-namespace blocks such as `roxder/cta-banner`. |
+| `name` | No | Full block name for tooling and tests. Defaults to the path key, such as `sobe/hero`, when omitted. |
 
 WordPress registration still reads the runtime block name from `block.json`.
 Keep `block.json` and the manifest `name` in sync when `name` is present.
+
+See [docs/block-authoring.md](docs/block-authoring.md) for the namespace,
+folder, manifest, Blade view, and coupling conventions.
 
 Use production blocks as references:
 
@@ -72,9 +76,9 @@ Client repos customize by using hooks documented in [docs/hooks-reference.md](do
 
 Do not modify upstream `sobe/*` blocks in place. Copy a platform example into the client namespace:
 
-1. Copy `resources/blocks/site-header` to `resources/blocks/roxder-site-header` or another client-owned folder.
+1. Copy `resources/blocks/sobe/site-header` to `resources/blocks/roxder/site-header` or another client-owned folder.
 2. Set `name: roxder/site-header` in `block.json`.
-3. Add the new slug to `resources/blocks/blocks-manifest.json` with `name: roxder/site-header` and the client category.
+3. Add the `roxder/site-header` path key to `resources/blocks/blocks-manifest.json` with the client category.
 4. Customize the copy in the client repo.
 
 This keeps `git merge upstream/main` focused on platform changes instead of client markup conflicts.

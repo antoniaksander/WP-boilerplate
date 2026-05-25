@@ -7,7 +7,7 @@ use Roots\Acorn\View\Composer;
 class ProductCategoriesGrid extends Composer
 {
     protected static $views = [
-        'blocks.product-categories-grid',
+        'blocks.sobe.product-categories-grid',
     ];
 
     public function with(): array

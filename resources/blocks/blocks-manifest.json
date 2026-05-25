@@ -1,38 +1,38 @@
 {
-  "example": {
+  "sobe/example": {
     "category": "sobe-general"
   },
-  "hero": {
+  "sobe/hero": {
     "category": "sobe-general"
   },
-  "faq": {
+  "sobe/faq": {
     "category": "sobe-general"
   },
-  "product-carousel": {
+  "sobe/product-carousel": {
     "category": "sobe-woocommerce"
   },
-  "brand-carousel": {
+  "sobe/brand-carousel": {
     "category": "sobe-woocommerce"
   },
-  "catalog-filters": {
+  "sobe/catalog-filters": {
     "category": "sobe-woocommerce"
   },
-  "our-brands": {
+  "sobe/our-brands": {
     "category": "sobe-woocommerce"
   },
-  "product-feature": {
+  "sobe/product-feature": {
     "category": "sobe-woocommerce"
   },
-  "product-categories-grid": {
+  "sobe/product-categories-grid": {
     "category": "sobe-woocommerce"
   },
-  "reviews-slider": {
+  "sobe/reviews-slider": {
     "category": "sobe-woocommerce"
   },
-  "site-header": {
+  "sobe/site-header": {
     "category": "sobe-layout"
   },
-  "site-footer": {
+  "sobe/site-footer": {
     "category": "sobe-layout"
   }
 }

@@ -7,7 +7,7 @@ use Roots\Acorn\View\Composer;
 class ProductFeature extends Composer
 {
     protected static $views = [
-        'blocks.product-feature',
+        'blocks.sobe.product-feature',
     ];
 
     public function with(): array

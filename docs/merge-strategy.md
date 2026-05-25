@@ -33,6 +33,7 @@ These changes can break client forks and need migration notes:
 - Replacing app-shell event names or `localStorage.theme`
 - Changing WooCommerce fragment selectors such as `div.sobe-side-cart-content` or `span.sobe-cart-count`
 - Renaming `product_brand` without a compatibility path
+- Reorganizing platform block folders, manifest keys, or Blade view paths; every client repo must manually move matching `sobe/*` block files during sync
 
 ## Sync Cadence
 

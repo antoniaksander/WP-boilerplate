@@ -108,11 +108,12 @@ export default defineConfig({
     port: 5173,
   },
   resolve: {
-    alias: {
-      '@scripts': '/resources/js',
-      '@styles': '/resources/css',
-      '@images': '/resources/images',
-    },
+    alias: [
+      { find: '@scripts', replacement: '/resources/js' },
+      { find: '@styles', replacement: '/resources/css' },
+      { find: '@images', replacement: '/resources/images' },
+      { find: /^\.\.\/\.\.\/js\//, replacement: '/resources/js/' },
+    ],
   },
   optimizeDeps: {
     include: ['react', 'react-dom'],
