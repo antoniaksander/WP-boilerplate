@@ -12,7 +12,8 @@
 - `main` is the platform contract for client repos.
 - Universal blocks keep the `sobe/*` namespace.
 - Client-specific blocks use a client namespace such as `roxder/*`.
-- Block registration is manifest-driven through `resources/blocks/blocks-manifest.json`.
+- Platform block folders live under `resources/blocks/sobe/`.
+- Block registration is manifest-driven through path-style keys in `resources/blocks/blocks-manifest.json`.
 - Textdomain is `sobe`.
 - `product_brand` is platform-owned and can be disabled with `sobe/product_brand/register`.
 - Runtime library policy is documented in [library-version-policy.md](library-version-policy.md).
@@ -25,5 +26,23 @@
 - Prefer hooks over file overrides. When a conflict involves platform hooks, keep the `sobe/*` hook names intact and re-apply client behavior around them.
 - For `.gitignore` conflicts, keep the union of platform and client rules unless a rule is clearly obsolete.
 - Re-test shop archive, PDP, side-cart, search modal, wishlist surfaces, header/footer layout shell blocks, dark mode, and all custom client blocks after each upstream merge.
+
+### Block Folder Reorganization
+
+The platform moved flat block folders from `resources/blocks/{slug}` to
+`resources/blocks/sobe/{slug}`, changed manifest keys from slug-only keys to
+path-style keys such as `sobe/hero`, and moved block Blade views from
+`resources/views/blocks/{slug}.blade.php` to
+`resources/views/blocks/sobe/{slug}.blade.php`.
+
+Every existing client fork should expect conflicts on the next upstream sync.
+Move any client-maintained copies of upstream `sobe/*` block folders and Blade
+views to the new `sobe/` paths, and update their manifest keys to path-style
+keys. Leave client-namespaced blocks under
+`resources/blocks/{client-prefix}/` where appropriate, and update those
+manifest keys as needed.
+
+Client-namespaced blocks are not moved by this platform commit. Clients own
+that reorganization in their own repos.
 
 See [client-fork-guide.md](client-fork-guide.md#upstream-sync) for the full branch and PR workflow.

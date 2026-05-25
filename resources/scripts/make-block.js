@@ -2,39 +2,43 @@
  * Block scaffold — creates all required files for a new custom block.
  *
  * Usage:  npm run make:block -- my-block-slug [--category=sobe-general]
+ *         npm run make:block -- namespace/my-block-slug [--category=sobe-general]
  *
  * Categories: sobe-general (default) | sobe-content | sobe-woocommerce | sobe-layout
  *
  * Creates:
- *   resources/blocks/{slug}/block.json
- *   resources/blocks/{slug}/index.jsx
- *   resources/blocks/{slug}/edit.jsx
- *   resources/blocks/{slug}/save.jsx
- *   resources/blocks/{slug}/style.scss
- *   resources/blocks/{slug}/editor.scss
- *   resources/views/blocks/{slug}.blade.php
+ *   resources/blocks/{namespace}/{slug}/block.json
+ *   resources/blocks/{namespace}/{slug}/index.jsx
+ *   resources/blocks/{namespace}/{slug}/edit.jsx
+ *   resources/blocks/{namespace}/{slug}/save.jsx
+ *   resources/blocks/{namespace}/{slug}/style.scss
+ *   resources/blocks/{namespace}/{slug}/editor.scss
+ *   resources/views/blocks/{namespace}/{slug}.blade.php
  *   resources/blocks/blocks-manifest.json  (entry added)
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 
 // ── Parse args ───────────────────────────────────────────────────────────────
 
-const slug = process.argv[2];
+const inputPath = process.argv[2];
 
-if (!slug) {
+if (!inputPath) {
   console.error('Error: block slug is required.\nUsage: npm run make:block -- my-block-slug [--category=sobe-general]');
   process.exit(1);
 }
 
-if (slug.startsWith('--')) {
+if (inputPath.startsWith('--')) {
   console.error('Error: slug must come before flags.\nUsage: npm run make:block -- my-block-slug [--category=sobe-general]');
   process.exit(1);
 }
 
-if (!/^[a-z][a-z0-9-]*$/.test(slug)) {
-  console.error('Error: slug must be lowercase letters, numbers, and hyphens only (e.g. my-block).');
+const blockPath = inputPath.includes('/') ? inputPath : `sobe/${inputPath}`;
+const [namespace, slug, ...extra] = blockPath.split('/');
+
+if (extra.length || !/^[a-z][a-z0-9_-]*$/.test(namespace) || !/^[a-z][a-z0-9-]*$/.test(slug)) {
+  console.error('Error: block path must be namespace/slug with lowercase letters, numbers, hyphens, or underscores in the namespace.');
   process.exit(1);
 }
 
@@ -52,8 +56,8 @@ if (!VALID_CATEGORIES.includes(category)) {
 const toTitle = (s) => s.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 const title = toTitle(slug);
 
-const BLOCK_DIR  = resolve(`resources/blocks/${slug}`);
-const BLADE_PATH = resolve(`resources/views/blocks/${slug}.blade.php`);
+const BLOCK_DIR  = resolve(`resources/blocks/${blockPath}`);
+const BLADE_PATH = resolve(`resources/views/blocks/${blockPath}.blade.php`);
 const MANIFEST   = resolve('resources/blocks/blocks-manifest.json');
 
 // ── Guard: duplicate ─────────────────────────────────────────────────────────
@@ -66,11 +70,12 @@ if (existsSync(BLOCK_DIR)) {
 // ── Create files ─────────────────────────────────────────────────────────────
 
 mkdirSync(BLOCK_DIR, { recursive: true });
+mkdirSync(dirname(BLADE_PATH), { recursive: true });
 
 writeFileSync(`${BLOCK_DIR}/block.json`, JSON.stringify({
   '$schema': 'https://schemas.wp.org/trunk/block.json',
   apiVersion: 3,
-  name: `sobe/${slug}`,
+  name: blockPath,
   version: '0.1.0',
   title,
   category,
@@ -132,7 +137,7 @@ export default function Edit({ attributes, setAttributes }) {
 writeFileSync(`${BLOCK_DIR}/save.jsx`,
 `// Returning null is intentional: this is a dynamic block.
 // WordPress never uses the client-side save output — the Blade template
-// at resources/views/blocks/${slug}.blade.php renders the frontend HTML
+// at resources/views/blocks/${blockPath}.blade.php renders the frontend HTML
 // via the render_callback registered in app/blocks.php.
 export default function save() {
   return null;
@@ -164,26 +169,26 @@ writeFileSync(BLADE_PATH,
 
 const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
 
-if (slug in manifest) {
-  console.warn(`Warning: "${slug}" is already in blocks-manifest.json — skipping manifest update.`);
+if (blockPath in manifest) {
+  console.warn(`Warning: "${blockPath}" is already in blocks-manifest.json — skipping manifest update.`);
 } else {
-  manifest[slug] = { category };
+  manifest[blockPath] = { category };
   writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + '\n');
 }
 
 // ── Done ─────────────────────────────────────────────────────────────────────
 
 console.log(`
-✅  Block "${slug}" scaffolded successfully.
+✅  Block "${blockPath}" scaffolded successfully.
 
 Files created:
-  resources/blocks/${slug}/block.json
-  resources/blocks/${slug}/index.jsx
-  resources/blocks/${slug}/edit.jsx
-  resources/blocks/${slug}/save.jsx
-  resources/blocks/${slug}/style.scss
-  resources/blocks/${slug}/editor.scss
-  resources/views/blocks/${slug}.blade.php
+  resources/blocks/${blockPath}/block.json
+  resources/blocks/${blockPath}/index.jsx
+  resources/blocks/${blockPath}/edit.jsx
+  resources/blocks/${blockPath}/save.jsx
+  resources/blocks/${blockPath}/style.scss
+  resources/blocks/${blockPath}/editor.scss
+  resources/views/blocks/${blockPath}.blade.php
 
 Manifest updated:
   resources/blocks/blocks-manifest.json  (category: ${category})
@@ -191,6 +196,6 @@ Manifest updated:
 Next steps:
   1. Define your attributes in block.json
   2. Add InspectorControls to edit.jsx
-  3. Build the output in resources/views/blocks/${slug}.blade.php
+  3. Build the output in resources/views/blocks/${blockPath}.blade.php
   4. Run: npm run dev
 `);

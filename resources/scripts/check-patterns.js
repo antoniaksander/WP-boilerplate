@@ -21,11 +21,11 @@ const { core, woocommerce } = JSON.parse(
 const CORE_ALLOWED = new Set(core);
 const WC_ALLOWED = new Set(woocommerce);
 
-// Derive custom blocks from the manifest. Names default to sobe/<slug> unless
-// a manifest entry declares an explicit full name for a client namespace block.
+// Derive custom blocks from the manifest. Names default to the namespace/slug
+// path unless a manifest entry declares an explicit full name.
 const manifest = JSON.parse(readFileSync(resolve('resources/blocks/blocks-manifest.json'), 'utf8'));
 const MANIFEST_ALLOWED = new Set(
-  Object.entries(manifest).map(([slug, entry]) => entry.name ?? `sobe/${slug}`),
+  Object.entries(manifest).map(([blockPath, entry]) => entry.name ?? blockPath),
 );
 
 function isAllowed(name) {

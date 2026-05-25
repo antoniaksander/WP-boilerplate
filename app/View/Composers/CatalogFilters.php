@@ -7,7 +7,7 @@ use Roots\Acorn\View\Composer;
 class CatalogFilters extends Composer
 {
     protected static $views = [
-        'blocks.catalog-filters',
+        'blocks.sobe.catalog-filters',
     ];
 
     public function with(): array
