@@ -18,6 +18,11 @@ return [
         'hero' => [1920, 1080, true],
     ],
 
+    'page_transitions' => [
+        'enabled' => false,
+        'container_selector' => '#main',
+    ],
+
     'wc_columns' => [
         'mobile' => 1,
         'tablet' => 3,

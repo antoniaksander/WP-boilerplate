@@ -52,6 +52,7 @@ Application::configure()
 
 collect([
     'helpers',
+    'page-transitions',
     'setup',
     'blocks',
     'assets',
