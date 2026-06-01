@@ -211,6 +211,21 @@ client fork needs a genuinely new token in the editor palette, add that token
 to the mapping in the client fork. This is a client-side change, not a platform
 change.
 
+## Page Transitions And Lifecycle
+
+Client forks inherit the lifecycle subsystem automatically. Page transitions
+are opt-in through `config/theme.php` `page_transitions.enabled`; when disabled,
+hard-navigation behavior is unchanged.
+
+Custom blocks and scripts added in a fork should follow the lifecycle-safe
+module pattern in [page-transitions.md](page-transitions.md#module-authoring-guide).
+Existing fork modules that predate the lifecycle subsystem can keep working on
+initial page load because the pattern retains a `DOMContentLoaded` fallback.
+Refactor those modules when they need to survive page transitions or AJAX
+content replacement.
+
+The full guide is in [page-transitions.md](page-transitions.md).
+
 ## Blocks
 
 Universal blocks stay in `sobe/*`. Client-specific blocks use a client

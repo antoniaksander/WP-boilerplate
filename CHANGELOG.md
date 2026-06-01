@@ -26,6 +26,21 @@
 - Added shared `App\sobe_current_request_url()` PHP helper (in
   `app/helpers.php`) that returns the front-end URL even in AJAX context (uses
   `wp_get_referer()` when `wp_doing_ajax()`).
+- Added Swup page transitions engine (`app/page-transitions.php`,
+  `resources/js/sobe-page-transitions.js`). It is disabled by default, opt-in
+  via the `config/theme.php` `page_transitions.enabled` flag, and integrates
+  with the lifecycle registry.
+- Added public page transition filters:
+  `sobe/page_transitions/enabled`,
+  `sobe/page_transitions/excluded_urls`,
+  `sobe/page_transitions/container_selector`, and
+  `sobe/page_transitions/preserve_body_classes`.
+- Added `sobe:shell-reset` custom event dispatched on `visit:start` so
+  persistent shell components such as mobile nav, search overlay, and cart
+  drawer can reset open state on navigation.
+- Added `docs/page-transitions.md` documenting the lifecycle subsystem, module
+  authoring guide, Strategy C params pattern, public filters, debugging, and
+  off-by-default rationale.
 
 ### Changed
 
@@ -46,16 +61,14 @@
   cleanup, and filter-store reset. Page-local params now emitted as DOM JSON
   script tags inside the swappable container in addition to existing window
   globals (legacy fallback retained for backward compatibility).
+- Updated `docs/client-fork-guide.md` with a brief section on the lifecycle
+  subsystem.
+- Updated `docs/client-boundary.md` to document the lifecycle subsystem as
+  upstream infrastructure.
 
 ### Fixed
 
 - None yet.
-
-### Notes
-
-- No user-visible behavior changes on hard navigation. The lifecycle
-  infrastructure is in place for an upcoming opt-in page transitions feature
-  that will be introduced in a separate change.
 
 ## v2.3.0 - 2026-05-21
 
