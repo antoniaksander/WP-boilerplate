@@ -2,12 +2,20 @@
 
 ## Unreleased
 
+## v2.6.1 - 2026-06-06
+
 ### Security
 
 - Updated Composer dependencies to resolve 7 advisories in transitive Symfony
   components (`http-foundation`, `http-kernel`, `mime`, `polyfill-intl-idn`):
   Symfony bumped to 8.1.0 and `polyfill-intl-idn` to 1.38.1. `composer audit`
   reports no remaining advisories.
+- Resolved an `npm` advisory by updating `qs` / `express`.
+
+### Changed
+
+- Updated dev/CI dependencies via Dependabot (npm minor/patch group; GitHub
+  Actions `checkout` / `setup-node` to v6).
 
 ## v2.6.0 - 2026-06-05
 
