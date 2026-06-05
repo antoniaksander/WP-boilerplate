@@ -30,6 +30,12 @@ return [
         'container_selector' => '#main',
     ],
 
+    'blocks' => [
+        // Keep the scaffold block available for platform development without
+        // registering it in production/client editors by default.
+        'register_example' => false,
+    ],
+
     'wc_columns' => [
         'mobile' => 1,
         'tablet' => 3,

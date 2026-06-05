@@ -286,6 +286,11 @@ Example category shape:
 The runtime and Vite entries iterate over the manifest keys, so the key must
 match the namespace-qualified folder path under `resources/blocks`.
 
+The upstream `sobe/example` entry is intentionally present but not registered in
+production by default. Do not delete it from client manifests during syncs; it is
+gated by `config('theme.blocks.register_example')` and should only be enabled
+for platform development.
+
 Entry fields:
 
 | Field | Required | Notes |

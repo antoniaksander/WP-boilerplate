@@ -16,6 +16,10 @@ add_action('init', function (): void {
         : [];
 
     foreach (array_keys($manifest ?: []) as $blockPath) {
+        if ($blockPath === 'sobe/example' && ! (bool) config('theme.blocks.register_example', false)) {
+            continue;
+        }
+
         $blockHandle = str_replace('/', '-', $blockPath);
         $assetUri = \Roots\asset("resources/blocks/{$blockPath}/index.jsx")->uri();
         $viewName = 'blocks.'.str_replace('/', '.', $blockPath);

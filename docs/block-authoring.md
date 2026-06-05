@@ -41,6 +41,13 @@ Minimal client entry for reference:
 
 Clients own their client-namespaced blocks and categories in their repos.
 
+`sobe/example` is an upstream scaffold/reference block. It intentionally remains
+listed in `resources/blocks/blocks-manifest.json`, but production registration
+is disabled by default through `config('theme.blocks.register_example')`. Enable
+that flag only while developing or verifying the block system. Client forks
+should leave the manifest entry intact during upstream syncs instead of deleting
+it to hide the block.
+
 ## Blade View Location
 
 Block views live at:
