@@ -3,6 +3,7 @@
 namespace App\WooCommerce;
 
 use function App\sobe_get_filtered_term_counts;
+use function App\sobe_get_filtered_price_range;
 use function App\sobe_catalog_pagination_html;
 
 /**
@@ -91,6 +92,7 @@ class FilterHandler
             'count' => (int) $query->found_posts,
             'count_html' => $countHtml,
             'filters' => sobe_get_filtered_term_counts($queryArgs),
+            'price_range' => sobe_get_filtered_price_range($queryArgs),
         ];
 
         return (array) apply_filters('sobe/catalog_filters/response', $response, $query, $state);

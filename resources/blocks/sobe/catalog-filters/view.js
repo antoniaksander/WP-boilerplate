@@ -310,6 +310,42 @@ function initCatalogFilters(instance, params) {
     }
   }
 
+  function updatePriceRange(data, filterState) {
+    const range = data?.price_range;
+    const sliderEl = root.querySelector('[data-range-slider]');
+    if (!range || !sliderEl?.noUiSlider) return;
+
+    const nextMin = parseFloat(range.min);
+    const nextMax = parseFloat(range.max);
+    if (!Number.isFinite(nextMin) || !Number.isFinite(nextMax) || nextMax <= nextMin) return;
+
+    const oldMin = parseFloat(sliderEl.dataset.min ?? nextMin);
+    const oldMax = parseFloat(sliderEl.dataset.max ?? nextMax);
+    const requestedMin = parseFloat(filterState.min_price);
+    const requestedMax = parseFloat(filterState.max_price);
+    const minWasDefault = !Number.isFinite(requestedMin) || requestedMin <= oldMin;
+    const maxWasDefault = !Number.isFinite(requestedMax) || requestedMax >= oldMax;
+    const nextFrom = minWasDefault ? nextMin : Math.min(Math.max(requestedMin, nextMin), nextMax);
+    const nextTo = maxWasDefault ? nextMax : Math.min(Math.max(requestedMax, nextMin), nextMax);
+    const minInput = root.querySelector('[data-price-min]');
+    const maxInput = root.querySelector('[data-price-max]');
+
+    sliderEl.dataset.min = String(nextMin);
+    sliderEl.dataset.max = String(nextMax);
+    sliderEl.dataset.from = String(nextFrom);
+    sliderEl.dataset.to = String(nextTo);
+
+    [minInput, maxInput].forEach((input) => {
+      input?.setAttribute('min', String(nextMin));
+      input?.setAttribute('max', String(nextMax));
+    });
+
+    sliderEl.noUiSlider.updateOptions({
+      range: { min: nextMin, max: nextMax },
+    }, false);
+    sliderEl.noUiSlider.set([nextFrom, nextTo]);
+  }
+
   function syncChips(filterState) {
     const zone = root.querySelector('[data-filter-chips]');
     if (!zone) return;
@@ -378,6 +414,7 @@ function initCatalogFilters(instance, params) {
       commitFilterStore(filterState, params.action, params.nonce);
       syncChips(filterState);
       if (data.filters) updateFilterCounts(data);
+      updatePriceRange(data, filterState);
       updateClearAllVisibility(filterState);
 
       // When Swup is active, preserve its history state structure so back-nav over
