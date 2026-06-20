@@ -296,6 +296,79 @@ function sobe_get_filtered_term_counts(array $base_query_args): array
     return apply_filters('sobe/catalog_filters/term_counts', $result, $base_query_args);
 }
 
+/**
+ * Compute the available product price range for the current non-price filters.
+ *
+ * The incoming query args include the active price clause (the frontend always
+ * submits min/max inputs), so strip it first — that way changing a brand /
+ * category / attribute can re-scope the slider bounds to the matching set.
+ *
+ * @param  array  $base_query_args  Full WP_Query args including all active filters.
+ * @return array{min: float, max: float}
+ */
+function sobe_get_filtered_price_range(array $base_query_args): array
+{
+    $query_args = $base_query_args;
+
+    if (! empty($query_args['meta_query']) && is_array($query_args['meta_query'])) {
+        $relation = isset($query_args['meta_query']['relation'])
+            ? sanitize_key((string) $query_args['meta_query']['relation'])
+            : '';
+        $meta_query = [];
+        foreach ($query_args['meta_query'] as $key => $clause) {
+            if ($key === 'relation') {
+                continue;
+            }
+            if (is_array($clause) && ($clause['key'] ?? '') === '_price') {
+                continue;
+            }
+            $meta_query[] = $clause;
+        }
+
+        if ($meta_query === []) {
+            unset($query_args['meta_query']);
+        } elseif ($relation !== '' && count($meta_query) > 1) {
+            $query_args['meta_query'] = array_merge(['relation' => $relation], $meta_query);
+        } else {
+            $query_args['meta_query'] = $meta_query;
+        }
+    }
+
+    $query_args['fields'] = 'ids';
+    $query_args['posts_per_page'] = -1;
+    $query_args['no_found_rows'] = true;
+    unset($query_args['paged']);
+
+    $query = new \WP_Query($query_args);
+    $ids = array_map('intval', (array) $query->posts);
+    wp_reset_postdata();
+
+    if ($ids === []) {
+        return apply_filters('sobe/catalog_filters/price_range', ['min' => 0.0, 'max' => 0.0], $base_query_args);
+    }
+
+    global $wpdb;
+
+    // $ids are intval-cast above, so the IN list is safe to interpolate.
+    $ids_list = implode(',', $ids);
+    $row = $wpdb->get_row($wpdb->prepare(
+        "SELECT MIN(meta_value+0) AS min_price, MAX(meta_value+0) AS max_price
+         FROM {$wpdb->postmeta}
+         WHERE post_id IN ($ids_list)
+         AND meta_key = %s
+         AND meta_value != ''
+         AND meta_value IS NOT NULL",
+        '_price'
+    ));
+
+    $range = [
+        'min' => (float) ($row->min_price ?? 0),
+        'max' => (float) ($row->max_price ?? 0),
+    ];
+
+    return apply_filters('sobe/catalog_filters/price_range', $range, $base_query_args);
+}
+
 // ── AJAX catalog filter handler ───────────────────────────────────────────────
 // Core logic lives in App\WooCommerce\FilterHandler so it's testable without HTTP.
 
